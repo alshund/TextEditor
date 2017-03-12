@@ -15,10 +15,7 @@ public class CaretHandler implements KeyListener{
         caret = frameWindow.getTextPanel().getCaret();
     }
     @Override
-    public void keyTyped(KeyEvent keyEvent) {
-
-    }
-
+    public void keyTyped(KeyEvent keyEvent) {}
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
@@ -31,9 +28,6 @@ public class CaretHandler implements KeyListener{
             caret.incrementY();
         }
     }
-
     @Override
-    public void keyReleased(KeyEvent keyEvent) {
-
-    }
+    public void keyReleased(KeyEvent keyEvent) {}
 }

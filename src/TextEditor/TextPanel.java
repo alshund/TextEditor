@@ -46,11 +46,11 @@ public class TextPanel extends JComponent {
 
 
                 if (charElement.isSelect()) {
-                    graphics2D.setColor(Color.gray);
+                    graphics2D.setColor(Color.BLACK);
                     Rectangle2D rect = new Rectangle
-                            (coordinateX, coordinateY-line.getMaxHigh()+3, fontMetrics.stringWidth(charElement.getStringElement()), line.getMaxHigh()-1);
+                            (coordinateX-2, coordinateY-line.getMaxHigh()+2, fontMetrics.stringWidth(charElement.getStringElement())+3, line.getMaxHigh());
                     graphics2D.fill(rect);
-                    graphics2D.setColor(Color.blue);
+                    graphics2D.setColor(Color.WHITE);
                 }
 
 
@@ -80,7 +80,7 @@ public class TextPanel extends JComponent {
     public void mouseClick(Point point){
         for (Line line: text){
             line.borderOfLine(point);
-            for(Char charElement: line.getLine()){
+            for (Char charElement : line.getLine()){
                 if(charElement.isElementHere(point)){
                     caret.setCaretListY(text.indexOf(line));
                     caret.setCaretListX(line.indexOf(charElement) + 1);

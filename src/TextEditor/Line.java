@@ -73,7 +73,7 @@ public class Line {
         if (coordinateY - maxHigh <= click.getY() && coordinateY >= click.getY() && maxLength <= click.getX()){
             caret.setCaretListX(line.size());
             caret.setCaretListY(numberOfLine);
-        } else if(click.getX() <= 3){
+        } else if(click.getX() <= 10){
             caret.setCaretListX(0);
         }
     }
