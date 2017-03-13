@@ -22,7 +22,7 @@ public class Line {
         this.frameWindow = frameWindow;
         textPanel = frameWindow.getTextPanel();
         caret = textPanel.getCaret();
-        maxHigh = 15;
+        maxHigh = 10;
         maxLength = 0;
 
     }

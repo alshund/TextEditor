@@ -25,7 +25,6 @@ public class TextPanel extends JComponent {
     public List<Line> getText(){
         return text;
     }
-
     public void createInput(){
         caret = new Caret(frameWindow);
         CaretTimer caretTimer = new CaretTimer(this);
@@ -33,50 +32,73 @@ public class TextPanel extends JComponent {
         text.add(newLine);
     }
 
-    protected void paintComponent(Graphics g) {
-        Graphics2D graphics2D= (Graphics2D) g;
-        int coordinateY = 0, numberOfLine = 0, xMax = 0;
-        for (Line line:text){
-            coordinateY += line.getMaxHigh();
-            int coordinateX = 10, numberOfChar = 0;
-            for(Char charElement:line.getLine()){
-                graphics2D.setColor(Color.BLACK);
-                graphics2D.drawString(charElement.getStringElement(), coordinateX, coordinateY);
+    private void createSelectionArea(Line line, Char charElement, Graphics2D graphics2D, int X, int Y){
+        if (charElement.isSelect()){
+            FontMetrics fontMetrics = graphics2D.getFontMetrics();
+            graphics2D.setColor(new Color(200, 200, 200, 120));
+            Rectangle2D rectangle2D = new Rectangle(X, Y - line.getMaxHigh(), fontMetrics.stringWidth(charElement.getStringElement()), line.getMaxHigh());
+            graphics2D.draw(rectangle2D);
+            graphics2D.fill(rectangle2D);
+        }
+    }
+    private void setFont(Graphics2D graphics2D){
+        for (Line line : text){
+            for (Char charElement : line.getLine()){
                 FontMetrics fontMetrics = graphics2D.getFontMetrics();
-
-
-                if (charElement.isSelect()) {
-                    graphics2D.setColor(new Color(0, 0, 0, 200));
-                    Rectangle2D rect = new Rectangle
-                            (coordinateX-2, coordinateY-line.getMaxHigh()+2, fontMetrics.stringWidth(charElement.getStringElement())+3, line.getMaxHigh());
-                    graphics2D.fill(rect);
-                    graphics2D.setColor(Color.WHITE);
-                }
-
-
-                charElement.setCoordinateX(coordinateX);
-                charElement.setCoordinateY(coordinateY);
-                charElement.setHeight(fontMetrics.getHeight());
-                charElement.setWight(fontMetrics.stringWidth(charElement.getStringElement()));
-                coordinateX += fontMetrics.stringWidth(charElement.getStringElement()) + 1;
+                line.setMaxHigh(fontMetrics.getHeight());
+                System.out.println(line.getMaxHigh());
+            }
+            if (line.getMaxHigh() == 0){
+                line.setMaxHigh(10);
+            }
+        }
+    }
+    private int setChar(Char charElement, int X, int Y, Graphics2D graphics2D){
+        FontMetrics fontMetrics = graphics2D.getFontMetrics();
+        charElement.setCoordinateX(X);
+        charElement.setCoordinateY(Y);
+        charElement.setHeight(fontMetrics.getHeight());
+        charElement.setWight(fontMetrics.stringWidth(charElement.getStringElement()));
+        return (fontMetrics.stringWidth(charElement.getStringElement()) + 1);
+    }
+    private void setCaret(int X, int Y, int numberOfLine, int numberOfChar){
+        if (caret.getCaretListX() == numberOfChar && caret.getCaretListY() == numberOfLine){
+            caret.setCaretCoordinateX(X);
+            caret.setCaretCoordinateY(Y);
+        } else if (caret.getCaretListX() == 0 && caret.getCaretListY() == numberOfLine){
+            caret.setCaretCoordinateX(10);
+            caret.setCaretCoordinateY(Y);
+        }
+    }
+    private void setLine(Line line,  int maxLength, int numberOfLine, int Y){
+        line.setMaxLength(maxLength);
+        line.setNumberOfLine(numberOfLine);
+        line.setCoordinateY(Y);
+    }
+    private void paintChar(Graphics2D graphics2D){
+        int Y = 10, numberOfLine = 0;
+        for (Line line : text){
+            Y += line.getMaxHigh();
+            int X = 10, numberOfChar = 0;
+            for (Char charElement : line.getLine()){
+                graphics2D.setColor(Color.BLACK);
+                graphics2D.drawString(charElement.getStringElement(), X, Y);
+                createSelectionArea(line, charElement, graphics2D, X, Y);
                 numberOfChar++;
-                if(caret.getCaretListX() == numberOfChar && caret.getCaretListY() == numberOfLine){
-                    caret.setCaretCoordinateX(coordinateX);
-                    caret.setCaretCoordinateY(coordinateY);
-                }
+                X += setChar(charElement, X, Y, graphics2D);
+                setCaret(X, Y, numberOfLine, numberOfChar);
             }
-            line.setMaxLength(coordinateX);
-            line.setNumberOfLine(numberOfLine);
-            line.setCoordinateY(coordinateY);
-            xMax = xMax < coordinateX ? coordinateX : xMax;
-            if(caret.getCaretListX() == 0 && caret.getCaretListY() == numberOfLine){
-                caret.setCaretCoordinateX(10);
-                caret.setCaretCoordinateY(coordinateY);
-            }
+            setLine(line, X, numberOfLine, Y);
+            setCaret(X, Y, numberOfLine, numberOfChar);
             numberOfLine++;
         }
-        setPreferredSize(new Dimension(xMax + 50, coordinateY + 50));
     }
+    protected void paintComponent(Graphics graphics) {
+        Graphics2D graphics2D= (Graphics2D) graphics;
+        setFont(graphics2D);
+        paintChar(graphics2D);
+    }
+
     public void mouseClick(Point point){
         for (Line line: text){
             line.borderOfLine(point);
@@ -154,6 +176,10 @@ public class TextPanel extends JComponent {
                 for (Char charElement : line.getLine()){
                     if (!charElement.isSelect()){
                         charElement.setIsSelect(charElement.isElementHere(new Point (X, Y)));
+                        if (charElement.isElementHere(new Point(X, Y))){
+                            System.out.println(charElement.getStringElement());
+
+                        }
                     }
                 }
             }

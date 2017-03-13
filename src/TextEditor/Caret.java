@@ -17,6 +17,7 @@ public class Caret {
 
 
     public Caret(FrameWindow frameWindow){
+        this.frameWindow = frameWindow;
         textPanel = frameWindow.getTextPanel();
         caretCoordinateX = 10;
         caretCoordinateY = 10;
@@ -53,15 +54,15 @@ public class Caret {
 
     public void drawCaret(){
         Graphics2D graphics2D = (Graphics2D) textPanel.getGraphics();
-        graphics2D.drawString("|", getCaretCoordinateX(), getCaretCoordinateY());
+        graphics2D.drawString("_", getCaretCoordinateX(), getCaretCoordinateY());
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-      /*graphics2D.setBackground(textPanel.getBackground());
-        graphics2D.drawString("|", getCaretCoordinateX(), getCaretCoordinateY());*/
-        textPanel.repaint();
+        graphics2D.setColor(textPanel.getBackground());
+        graphics2D.drawString("_", getCaretCoordinateX(), getCaretCoordinateY());
+//        textPanel.repaint();
     }
     public void incrementX(){
         if (caretListY == textPanel.getText().size() - 1 && caretListX == textPanel.getText().get(getCaretListY()).size()){
