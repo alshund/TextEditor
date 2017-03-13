@@ -46,7 +46,7 @@ public class TextPanel extends JComponent {
 
 
                 if (charElement.isSelect()) {
-                    graphics2D.setColor(Color.BLACK);
+                    graphics2D.setColor(new Color(0, 0, 0, 200));
                     Rectangle2D rect = new Rectangle
                             (coordinateX-2, coordinateY-line.getMaxHigh()+2, fontMetrics.stringWidth(charElement.getStringElement())+3, line.getMaxHigh());
                     graphics2D.fill(rect);
@@ -131,17 +131,34 @@ public class TextPanel extends JComponent {
     public void backSpaceKey(){
         if (caret.getCaretListX() == 0 && caret.getCaretListY() == 0){
         } else if (caret.getCaretListX() == 0){
+            caret.setCaretListX(getText().get(caret.getCaretListY() - 1).size());
             if (text.get(caret.getCaretListY()).size() != 0){
                 for (Char charElement: text.get(caret.getCaretListY()).getLine()){
                     text.get(caret.getCaretListY() - 1).getLine().add(charElement);
                 }
             }
             text.remove(caret.getCaretListY());
-            caret.decrementX();
+            caret.decrementY();
         } else {
             text.get(caret.getCaretListY()).remove(caret.getCaretListX() - 1, caret.getCaretListX());
             caret.decrementX();
         }
+    }
+
+    public void selectNext(){
+        caret.incrementX();
+        if (caret.getCaretListX() != 0){
+            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getCoordinateX() + 1;
+            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getCoordinateY() - 1;
+            for (Line line : text){
+                for (Char charElement : line.getLine()){
+                    if (!charElement.isSelect()){
+                        charElement.setIsSelect(charElement.isElementHere(new Point (X, Y)));
+                    }
+                }
+            }
+        }
+
     }
 
     public void insertKeyChar(char charKey){
