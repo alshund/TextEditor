@@ -19,28 +19,6 @@ public class TextPanel extends JComponent {
         this.frameWindow = frameWindow;
     }
 
-    public Caret getCaret(){
-        return caret;
-    }
-    public List<Line> getText(){
-        return text;
-    }
-    public void createInput(){
-        caret = new Caret(frameWindow);
-        CaretTimer caretTimer = new CaretTimer(this);
-        Line newLine = new Line(frameWindow);
-        text.add(newLine);
-    }
-
-    private void createSelectionArea(Line line, Char charElement, Graphics2D graphics2D, int X, int Y){
-        if (charElement.isSelect()){
-            FontMetrics fontMetrics = graphics2D.getFontMetrics();
-            graphics2D.setColor(new Color(200, 200, 200, 120));
-            Rectangle2D rectangle2D = new Rectangle(X, Y - line.getMaxHigh(), fontMetrics.stringWidth(charElement.getStringElement()), line.getMaxHigh());
-            graphics2D.draw(rectangle2D);
-            graphics2D.fill(rectangle2D);
-        }
-    }
     private void setFont(Graphics2D graphics2D){
         for (Line line : text){
             for (Char charElement : line.getLine()){
@@ -75,6 +53,15 @@ public class TextPanel extends JComponent {
         line.setNumberOfLine(numberOfLine);
         line.setCoordinateY(Y);
     }
+    private void createSelectionArea(Line line, Char charElement, Graphics2D graphics2D, int X, int Y){
+        if (charElement.isSelect()){
+            FontMetrics fontMetrics = graphics2D.getFontMetrics();
+            graphics2D.setColor(new Color(200, 200, 200, 120));
+            Rectangle2D rectangle2D = new Rectangle(X, Y - line.getMaxHigh(), fontMetrics.stringWidth(charElement.getStringElement()), line.getMaxHigh());
+            graphics2D.draw(rectangle2D);
+            graphics2D.fill(rectangle2D);
+        }
+    }
     private void paintChar(Graphics2D graphics2D){
         int Y = 10, numberOfLine = 0;
         for (Line line : text){
@@ -98,6 +85,21 @@ public class TextPanel extends JComponent {
         setFont(graphics2D);
         paintChar(graphics2D);
     }
+
+    public Caret getCaret(){
+        return caret;
+    }
+    public List<Line> getText(){
+        return text;
+    }
+    public void createInput(){
+        caret = new Caret(frameWindow);
+        CaretTimer caretTimer = new CaretTimer(this);
+        Line newLine = new Line(frameWindow);
+        text.add(newLine);
+    }
+
+
 
 
     public void mouseClick(Point point){
@@ -168,7 +170,7 @@ public class TextPanel extends JComponent {
         }
     }
 
-    public void selectNext(){
+    public void selectionNext(){
         caret.incrementX();
         if (caret.getCaretListX() != 0){
             int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getCoordinateX() + 1;
@@ -177,14 +179,20 @@ public class TextPanel extends JComponent {
                 for (Char charElement : line.getLine()){
                     if (!charElement.isSelect()){
                         charElement.setIsSelect(charElement.isElementHere(new Point (X, Y)));
-                        if (charElement.isElementHere(new Point(X, Y))){
-                            System.out.println(charElement.getStringElement());
-
+                    } else if (charElement.isElementHere(new Point(X, Y))){
+                        if (text.indexOf(line) == text.size() - 1 && line.getLine().indexOf(charElement) == line.size() - 1)
+                        {
+                            charElement.setIsSelect(true);
+                        } else {
+                            charElement.setIsSelect(false);
                         }
                     }
                 }
             }
         }
+
+    }
+    public void  selectionPrevious(){
 
     }
 
