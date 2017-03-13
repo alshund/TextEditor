@@ -99,6 +99,7 @@ public class TextPanel extends JComponent {
         paintChar(graphics2D);
     }
 
+
     public void mouseClick(Point point){
         for (Line line: text){
             line.borderOfLine(point);
