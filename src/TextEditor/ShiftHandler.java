@@ -1,6 +1,5 @@
 package TextEditor;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -17,10 +16,13 @@ public class ShiftHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_LEFT){
-            textPanel.selectionPrevious();
+            textPanel.leftSelection();
+        }
+        if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_UP){
+            textPanel.upSelection();
         }
         if(keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
-            textPanel.selectionNext();
+            textPanel.rightSelection();
         }
     }
 

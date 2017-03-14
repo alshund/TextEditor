@@ -13,8 +13,8 @@ public class Char {
     private char charElement;
     private int height;
     private int wight;
-    private int coordinateX;
-    private int coordinateY;
+    private int X;
+    private int Y;
     private int numberOfLine;
 
     public Char(char charElement, FrameWindow frameWindow){
@@ -23,11 +23,11 @@ public class Char {
         isSelect = false;
     }
 
-    public void setCoordinateX(int coordinateX){
-        this.coordinateX = coordinateX;
+    public void setX(int x){
+        this.X = x;
     }
-    public void setCoordinateY(int coordinateY){
-        this.coordinateY = coordinateY;
+    public void setY(int y){
+        this.Y = y;
     }
     public void setHeight (int height){
         this.height = height;
@@ -39,11 +39,11 @@ public class Char {
         this.isSelect = isSelect;
     }
 
-    public int getCoordinateX(){
-        return coordinateX;
+    public int getX(){
+        return X;
     }
-    public int getCoordinateY(){
-        return coordinateY;
+    public int getY(){
+        return Y;
     }
     public char getCharElement(){
         return charElement;
@@ -56,28 +56,23 @@ public class Char {
     }
 
     public boolean isElementHere (Point click){
-        return (click.getX() >= coordinateX &&
-                click.getY() <= coordinateY &&
-                click.getX() <= coordinateX + wight &&
-                click.getY() >= coordinateY - height);
+        return (click.getX() >= X &&
+                click.getY() <= Y &&
+                click.getX() <= X + wight &&
+                click.getY() >= Y - height);
     }
-    public boolean isElementHere (Point firstClick, Point secondClick){
+    public boolean isElementHere (Point firstPoint, Point secondPoint){
         int height = textPanel.getText().get(numberOfLine).getMaxHigh();
-        Point leftClick = (firstClick.getX() < secondClick.getX() ? firstClick : secondClick);
-        Point upClick = (firstClick.getY() < secondClick.getY() ? secondClick : firstClick);
-        Point rightClick = (firstClick.getX() < secondClick.getX() ? secondClick : firstClick);
-        Point downClick = (firstClick.getY() < secondClick.getY() ? firstClick : secondClick);
-        if (coordinateY <= downClick.getY() && coordinateY - height >= upClick.getY()){
-            return ((coordinateY >= upClick.getX()) && coordinateY - height < upClick.getY() && coordinateY >= upClick.getY() ||
-                    (coordinateY <= downClick.getX()) && coordinateY - height < downClick.getY() && coordinateY >= downClick.getY() ||
-                    (coordinateY - height >= upClick.getY() && coordinateY < downClick.getY()));
-
-        } else {
-            return ((coordinateY - height <= leftClick.getY() && coordinateY >= leftClick.getY()) &&
-                    (coordinateX >= leftClick.getY() && coordinateX <= rightClick.getX()) &&
-                    (coordinateY - height <= rightClick.getY() && coordinateY >= rightClick.getY()));
-
+        Point upPoint = firstPoint.getY() < secondPoint.getY() ? firstPoint : secondPoint;
+        Point downPoint = firstPoint.getY() < secondPoint.getY() ? secondPoint : firstPoint;
+        if (Y < downPoint.getY() || Y - height > upPoint.getY()){
+            return ((X > upPoint.getX() && Y - height < upPoint.getY() && Y > upPoint.getY()) ||
+                    (X < downPoint.getX() && Y - height < downPoint.getY() && Y > downPoint.getY()));
+        } else{
+            return true;
         }
+
+
     }
 
 }

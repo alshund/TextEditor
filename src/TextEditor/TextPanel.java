@@ -24,7 +24,6 @@ public class TextPanel extends JComponent {
             for (Char charElement : line.getLine()){
                 FontMetrics fontMetrics = graphics2D.getFontMetrics();
                 line.setMaxHigh(fontMetrics.getHeight());
-                System.out.println(line.getMaxHigh());
             }
             if (line.getMaxHigh() == 0){
                 line.setMaxHigh(10);
@@ -33,8 +32,8 @@ public class TextPanel extends JComponent {
     }
     private int setChar(Char charElement, int X, int Y, Graphics2D graphics2D){
         FontMetrics fontMetrics = graphics2D.getFontMetrics();
-        charElement.setCoordinateX(X);
-        charElement.setCoordinateY(Y);
+        charElement.setX(X);
+        charElement.setY(Y);
         charElement.setHeight(fontMetrics.getHeight());
         charElement.setWight(fontMetrics.stringWidth(charElement.getStringElement()));
         return (fontMetrics.stringWidth(charElement.getStringElement()) + 1);
@@ -170,11 +169,11 @@ public class TextPanel extends JComponent {
         }
     }
 
-    public void selectionNext(){
+    public void rightSelection(){
         caret.incrementX();
         if (caret.getCaretListX() != 0){
-            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getCoordinateX() + 1;
-            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getCoordinateY() - 1;
+            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
             for (Line line : text){
                 for (Char charElement : line.getLine()){
                     if (!charElement.isSelect()){
@@ -192,8 +191,44 @@ public class TextPanel extends JComponent {
         }
 
     }
-    public void  selectionPrevious(){
+    public void leftSelection(){
+        caret.decrementX();
+        if (caret.getCaretListX() != text.get(caret.getCaretListY()).getLine().size()){
+            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getX() + 1;
+            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getY() - 1;
+            for (Line line : text){
+                for (Char charElement : line.getLine()){
+                    if (!charElement.isSelect()){
+                        charElement.setIsSelect(charElement.isElementHere(new Point(X, Y)));
+                    } else if (charElement.isElementHere(new Point(X, Y))){
+                        if (text.indexOf(line) == 0 && line.indexOf(charElement) == 0){
+                            charElement.setIsSelect(true);
+                        } else{
+                            charElement.setIsSelect(false);
+                        }
+                    }
+                }
+            }
+        }
 
+    }
+    public void upSelection(){
+        int firstX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int firstY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        caret.decrementY();
+        int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        System.out.println(text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getStringElement());
+        System.out.println(secondX + "-" + caret.getCaretCoordinateX());
+        for (Line line : text){
+            for (Char charElement : line.getLine()){
+                if (!charElement.isSelect()){
+                    charElement.setIsSelect((charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))));
+                }else if (charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))){
+                    charElement.setIsSelect(false);
+                }
+            }
+        }
     }
 
     public void insertKeyChar(char charKey){
