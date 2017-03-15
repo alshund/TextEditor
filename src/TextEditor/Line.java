@@ -22,7 +22,7 @@ public class Line {
         this.frameWindow = frameWindow;
         textPanel = frameWindow.getTextPanel();
         caret = textPanel.getCaret();
-        maxHigh = 10;
+        maxHigh = 16;
         maxLength = 0;
 
     }
@@ -70,11 +70,9 @@ public class Line {
         line.add(charElement);
     }
     public void borderOfLine(Point click){
-        if (coordinateY - maxHigh <= click.getY() && coordinateY >= click.getY() && maxLength <= click.getX()){
-            caret.setCaretListX(line.size());
+        if (coordinateY - maxHigh <= click.getY()/* && coordinateY >= click.getY() && maxLength <= click.getX()*/){
             caret.setCaretListY(numberOfLine);
-        } else if(click.getX() <= 10){
-            caret.setCaretListX(0);
+            caret.setCaretListX(click.getX() <= 10 && coordinateY >= click.getY() ? 0 : line.size());
         }
     }
     public void remove(int x, int y){

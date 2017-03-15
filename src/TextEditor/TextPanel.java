@@ -42,7 +42,8 @@ public class TextPanel extends JComponent {
         if (caret.getCaretListX() == numberOfChar && caret.getCaretListY() == numberOfLine){
             caret.setCaretCoordinateX(X);
             caret.setCaretCoordinateY(Y);
-        } else if (caret.getCaretListX() == 0 && caret.getCaretListY() == numberOfLine){
+        }
+        if (caret.getCaretListX() == 0 && caret.getCaretListY() == numberOfLine){
             caret.setCaretCoordinateX(10);
             caret.setCaretCoordinateY(Y);
         }
@@ -136,23 +137,7 @@ public class TextPanel extends JComponent {
         caret.incrementY();
     }
 
-    public void enterKey(){
-        addNewLine();
-    }
-    public void deleteKey(){
-        if (caret.getCaretListX() == text.get(caret.getCaretListY()).size() && caret.getCaretListY() == text.size() - 1){
-        } else if (caret.getCaretListX() == text.get(caret.getCaretListY()).size()){
-            if (text.get(caret.getCaretListY() + 1).size() != 0){
-                for (Char charElement:text.get(caret.getCaretListY() + 1).getLine()){
-                    text.get(caret.getCaretListY()).add(charElement);
-                }
-            }
-            text.remove(caret.getCaretListY() + 1);
-        } else {
-            text.get(caret.getCaretListY()).remove(caret.getCaretListX(), caret.getCaretListX() + 1);
-        }
-    }
-    public void backSpaceKey(){
+    public void deletePreviousChar(){
         if (caret.getCaretListX() == 0 && caret.getCaretListY() == 0){
         } else if (caret.getCaretListX() == 0){
             caret.setCaretListX(getText().get(caret.getCaretListY() - 1).size());
@@ -168,10 +153,63 @@ public class TextPanel extends JComponent {
             caret.decrementX();
         }
     }
+    public void deleteNextChar(){
+        if (caret.getCaretListX() == text.get(caret.getCaretListY()).size() && caret.getCaretListY() == text.size() - 1){
+        } else if (caret.getCaretListX() == text.get(caret.getCaretListY()).size()){
+            if (text.get(caret.getCaretListY() + 1).size() != 0){
+                for (Char charElement:text.get(caret.getCaretListY() + 1).getLine()){
+                    text.get(caret.getCaretListY()).add(charElement);
+                }
+            }
+            text.remove(caret.getCaretListY() + 1);
+        } else {
+            text.get(caret.getCaretListY()).remove(caret.getCaretListX(), caret.getCaretListX() + 1);
+        }
+    }
+
+    public boolean deleteSelectedText(){
+        boolean newLine = false;
+        for (int indexY = 0; indexY < text.size(); indexY++){
+            newLine = true;
+            int indexX = 0;
+            while (indexX != text.get(indexY).getLine().size()){
+                if (text.get(indexY).getLine().get(indexX).isSelect()){
+                    if (newLine){
+                        caret.setCaretListX(indexX);
+                        caret.setCaretListY(indexY);
+                        newLine = false;
+                    }
+                    deleteNextChar();
+                    indexX--;
+                }
+                indexX++;
+                if (!newLine && caret.getCaretListX() == text.get(caret.getCaretListY()).getLine().size()){
+                    deleteNextChar();
+                }
+            }
+        }
+        return !newLine;
+    }
+    public void enterKey(){
+        deleteSelectedText();
+        addNewLine();
+    }
+    public void deleteKey(){
+        if(!deleteSelectedText()){
+            deleteNextChar();
+        }
+    }
+    public void backSpaceKey(){
+       if(!deleteSelectedText()){
+           deletePreviousChar();
+       }
+    }
 
     public void rightSelection(){
+        int beforeIncrement = caret.getCaretListX();
         caret.incrementX();
-        if (caret.getCaretListX() != 0){
+        int afterIncrement = caret.getCaretListX();
+        if (caret.getCaretListX() != 0 && beforeIncrement != afterIncrement){
             int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
             int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
             for (Line line : text){
@@ -192,8 +230,10 @@ public class TextPanel extends JComponent {
 
     }
     public void leftSelection(){
+        int beforeDecrement = caret.getCaretListX();
         caret.decrementX();
-        if (caret.getCaretListX() != text.get(caret.getCaretListY()).getLine().size()){
+        int afterDecrement = caret.getCaretListX();
+        if (caret.getCaretListX() != text.get(caret.getCaretListY()).getLine().size() && beforeDecrement != afterDecrement){
             int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getX() + 1;
             int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getY() - 1;
             for (Line line : text){
@@ -244,8 +284,18 @@ public class TextPanel extends JComponent {
             }
         }
     }
+    public void falseAlSelection(){
+        for (Line line : text){
+           for (Char charElement : line.getLine()){
+               charElement.setIsSelect(false);
+           }
+        }
+    }
+
+
 
     public void insertKeyChar(char charKey){
+        deleteSelectedText();
         text.get(caret.getCaretListY()).addChar(caret.getCaretListX(), charKey);
         caret.incrementX();
     }

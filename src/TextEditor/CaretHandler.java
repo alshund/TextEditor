@@ -9,9 +9,11 @@ import java.awt.event.KeyListener;
  */
 public class CaretHandler implements KeyListener{
     private FrameWindow frameWindow;
+    private TextPanel textPanel;
     private Caret caret;
     public CaretHandler(FrameWindow frameWindow){
         this.frameWindow = frameWindow;
+        textPanel = frameWindow.getTextPanel();
         caret = frameWindow.getTextPanel().getCaret();
     }
     @Override
@@ -19,12 +21,16 @@ public class CaretHandler implements KeyListener{
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
+            textPanel.falseAlSelection();
             caret.decrementX();
         } else if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_UP){
+            textPanel.falseAlSelection();
             caret.decrementY();
         } else if(!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
+            textPanel.falseAlSelection();
             caret.incrementX();
         } else if(!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_DOWN){
+            textPanel.falseAlSelection();
             caret.incrementY();
         }
     }

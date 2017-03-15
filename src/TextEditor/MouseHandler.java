@@ -18,6 +18,7 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent){
+        textPanel.falseAlSelection();
         textPanel.mouseClick(mouseEvent.getPoint());
     }
 
@@ -43,7 +44,6 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
-        System.out.println("123");
         textPanel.mouseClick(click, mouseEvent.getPoint());
     }
 

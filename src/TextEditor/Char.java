@@ -66,13 +66,15 @@ public class Char {
         Point upPoint = firstPoint.getY() < secondPoint.getY() ? firstPoint : secondPoint;
         Point downPoint = firstPoint.getY() < secondPoint.getY() ? secondPoint : firstPoint;
         if (Y < downPoint.getY() || Y - height > upPoint.getY()){
-            return ((X > upPoint.getX() && Y - height < upPoint.getY() && Y > upPoint.getY()) ||
-                    (X < downPoint.getX() && Y - height < downPoint.getY() && Y > downPoint.getY()) ||
-                    (Y < downPoint.getY() && Y - height > upPoint.getY()));
+            return ((X >= upPoint.getX() && Y - height < upPoint.getY() && Y >= upPoint.getY()) ||
+                    (X <= downPoint.getX() && Y - height < downPoint.getY() && Y >= downPoint.getY()) ||
+                    (Y < downPoint.getY() && Y - height >= upPoint.getY()));
         } else{
             Point leftPoint = firstPoint.getX() < secondPoint.getX() ? firstPoint : secondPoint;
             Point rightPoint = firstPoint.getX() < secondPoint.getX() ? secondPoint : firstPoint;
-            return (X >= leftPoint.getX() && X <= rightPoint.getX());
+            return (X >= leftPoint.getX() && X <= rightPoint.getX()/* &&
+                    Y - height < leftPoint.getY() && Y > leftPoint.getY() &&
+                    Y - height < rightPoint.getY() && Y > rightPoint.getY()*/);
         }
     }
 

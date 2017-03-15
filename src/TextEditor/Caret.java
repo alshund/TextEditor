@@ -21,8 +21,6 @@ public class Caret {
         textPanel = frameWindow.getTextPanel();
         caretCoordinateX = 10;
         caretCoordinateY = 10;
-        caretListX = 0;
-        caretListY = 0;
     }
 
     public int getCaretListX(){
