@@ -151,7 +151,9 @@ public class FrameWindow  {
                 unloadFrameWindow();
             }
         });
-        textPanel.addMouseListener(new MouseHandler(this));
+        MouseHandler mouseHandler = new MouseHandler(this);
+        textPanel.addMouseListener(mouseHandler);
+        textPanel.addMouseMotionListener(mouseHandler);
         frameWindow.addKeyListener(new KeyHandler(this));
         frameWindow.addKeyListener(new CaretHandler(this));
         frameWindow.addKeyListener(new DeleteHandler(this));

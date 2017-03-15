@@ -218,13 +218,27 @@ public class TextPanel extends JComponent {
         caret.decrementY();
         int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
         int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
-        System.out.println(text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getStringElement());
-        System.out.println(secondX + "-" + caret.getCaretCoordinateX());
         for (Line line : text){
             for (Char charElement : line.getLine()){
                 if (!charElement.isSelect()){
                     charElement.setIsSelect((charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))));
                 }else if (charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))){
+                    charElement.setIsSelect(false);
+                }
+            }
+        }
+    }
+    public void downSelection(){
+        int firstX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int firstY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        caret.incrementY();
+        int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        for (Line line : text){
+            for (Char charElement : line.getLine()){
+                if (!charElement.isSelect()){
+                    charElement.setIsSelect(charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY)));
+                } else if (charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))){
                     charElement.setIsSelect(false);
                 }
             }

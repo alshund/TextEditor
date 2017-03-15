@@ -17,17 +17,14 @@ public class ShiftHandler implements KeyListener {
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_LEFT){
             textPanel.leftSelection();
-        }
-        if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_UP){
+        } else if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_UP){
             textPanel.upSelection();
-        }
-        if(keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
+        } else if(keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
             textPanel.rightSelection();
+        } else if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_DOWN){
+            textPanel.downSelection();
         }
     }
-
     @Override
-    public void keyReleased(KeyEvent keyEvent) {
-
-    }
+    public void keyReleased(KeyEvent keyEvent) {}
 }

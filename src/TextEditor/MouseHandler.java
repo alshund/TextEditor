@@ -43,6 +43,7 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
+        System.out.println("123");
         textPanel.mouseClick(click, mouseEvent.getPoint());
     }
 

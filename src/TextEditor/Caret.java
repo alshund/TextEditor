@@ -79,9 +79,9 @@ public class Caret {
             if (caretListX > textPanel.getText().get(getCaretListY()).size()){
                 setCaretListX(textPanel.getText().get(getCaretListY()).size());
             }
-        }/* else {
+        } else {
             setCaretListX(textPanel.getText().get(caretListY).getLine().size());
-        }*/
+        }
     }
     public void decrementX(){
         if (caretListY == 0 && caretListX == 0){
@@ -99,9 +99,9 @@ public class Caret {
             if (caretListX > textPanel.getText().get(getCaretListY()).size()){
                 setCaretListX(textPanel.getText().get(getCaretListY()).size());
             }
-        } /*else{
+        } else{
             setCaretListX(0);
-        }*/
+        }
     }
 
     public void followCaret(){
