@@ -48,10 +48,10 @@ public class Caret {
 
 
     public void incrementX(){
-        if (isCaretInTheEndOfText()){
+        if (isCaretBeforeTheTextEnd()){
         } else if (isCaretBeforeTheLineEnd()){
             caretListX++;
-        } else if(isCaretBeforeTheTextEnd()){
+        } else if(isCaretBeforeTheLastLine()){
             caretListY++;
             setCaretListX(0);
         }
@@ -65,7 +65,7 @@ public class Caret {
         return caretListX < text.getText().get(getCaretListY()).size();
     }
 
-    private boolean isCaretInTheEndOfText() {
+    private boolean isCaretBeforeTheLastLine() {
         return caretListY == text.getText().size() - 1 && caretListX == text.getText().get(getCaretListY()).size();
     }
 
