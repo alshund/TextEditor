@@ -18,7 +18,7 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent){
-        textPanel.falseAlSelection();
+        textPanel.getText().falseAlSelection();
         textPanel.mouseClick(mouseEvent.getPoint());
     }
 

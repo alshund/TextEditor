@@ -42,7 +42,7 @@ public class Caret {
         if (isCaretInTheBeginOfText()){
         }else if(!isCaretInTheBeginOfTheLine()){
             caretListX--;
-        }else if (isCaretInTheFirstLine()){
+        }else if (!isCaretInTheFirstLine()){
             caretListY--;
             setCaretListX(text.getText().get(getCaretListY()).size());
         }
@@ -61,8 +61,8 @@ public class Caret {
 
     public void deletePreviousChar() {
         if (isCaretInTheBeginOfText()) {
-        } else if (!isCaretInTheBeginOfTheLine()) {
-            setCaretListX(text.get(getCaretListY() - 1).size());
+        } else if (isCaretInTheBeginOfTheLine()) {
+            setCaretListX(text.get(caretListY - 1).size());
             if (text.get(caretListY).size() != 0) {
                 for (Char charElement : text.getText().get(caretListY).getLine()) {
                     text.get(caretListY - 1).getLine().add(charElement);
@@ -76,35 +76,36 @@ public class Caret {
         }
     }
     public void deleteNextChar() {
-        if (caret.getCaretListX() == text.get(caret.getCaretListY()).size() && caret.getCaretListY() == text.size() - 1) {
-        } else if (caret.getCaretListX() == text.get(caret.getCaretListY()).size()) {
-            if (text.get(caret.getCaretListY() + 1).size() != 0) {
-                for (Char charElement : text.get(caret.getCaretListY() + 1).getLine()) {
-                    text.get(caret.getCaretListY()).add(charElement);
+        if (isCaretInTheEndOfText()) {
+        } else if (isCaretInTheEndOfLine()) {
+            if (text.get(getCaretListY() + 1).size() != 0) {
+                for (Char charElement : text.get(caretListY + 1).getLine()) {
+                    text.get(caretListY).add(charElement);
                 }
             }
-            text.remove(caret.getCaretListY() + 1);
+            text.remove(caretListY + 1);
         } else {
-            text.get(caret.getCaretListY()).remove(caret.getCaretListX(), caret.getCaretListX() + 1);
+            text.get(caretListY).remove(caretListX, caretListX + 1);
         }
     }
+
     public boolean deleteSelectedText() {
         boolean newLine = false;
-        for (int indexY = 0; indexY < text.size(); indexY++) {
+        for (int indexY = 0; indexY < text.getText().size(); indexY++) {
             newLine = true;
             int indexX = 0;
             while (indexX != text.get(indexY).getLine().size()) {
                 if (text.get(indexY).getLine().get(indexX).isSelect()) {
                     if (newLine) {
-                        caret.setCaretListX(indexX);
-                        caret.setCaretListY(indexY);
+                        caretListX = indexX;
+                        caretListY = indexY;
                         newLine = false;
                     }
                     deleteNextChar();
                     indexX--;
                 }
                 indexX++;
-                if (!newLine && caret.getCaretListX() == text.get(caret.getCaretListY()).getLine().size()) {
+                if (!newLine && isCaretInTheEndOfLine()) {
                     deleteNextChar();
                 }
             }
@@ -113,19 +114,19 @@ public class Caret {
     }
 
     public void leftSelection() {
-        int beforeDecrement = caret.getCaretListX();
-        caret.decrementX();
-        int afterDecrement = caret.getCaretListX();
-        List<Char> line1 = text.get(caret.getCaretListY()).getLine();
-        if (caret.getCaretListX() != line1.size() && beforeDecrement != afterDecrement) {
-            int X = line1.get(caret.getCaretListX()).getX() + 1;
-            int Y = line1.get(caret.getCaretListX()).getY() - 1;
-            for (Line line : text) {
+        int beforeDecrement = caretListX;
+        decrementX();
+        int afterDecrement = caretListX;
+        List<Char> line1 = text.get(caretListY).getLine();
+        if (!isCaretInTheEndOfLine() && beforeDecrement != afterDecrement) {
+            int X = line1.get(caretListX).getX() + 1;
+            int Y = line1.get(caretListX).getY() - 1;
+            for (Line line : text.getText()) {
                 for (Char charElement : line.getLine()) {
                     if (!charElement.isSelect()) {
                         charElement.setIsSelect(charElement.isElementHere(new Point(X, Y)));
                     } else if (charElement.isElementHere(new Point(X, Y))) {
-                        if (text.indexOf(line) == 0 && line.indexOf(charElement) == 0) {
+                        if (text.getText().indexOf(line) == 0 && line.indexOf(charElement) == 0) {
                             charElement.setIsSelect(true);
                         } else {
                             charElement.setIsSelect(false);
@@ -136,19 +137,18 @@ public class Caret {
         }
     }
     public void rightSelection() {
-        int beforeIncrement = caret.getCaretListX();
-        caret.incrementX();
-        int afterIncrement = caret.getCaretListX();
-        boolean b = caret.getCaretListX() != 0 && beforeIncrement != afterIncrement;
-        if (b) {
-            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
-            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
-            for (Line line : text) {
+        int beforeIncrement = caretListX;
+        incrementX();
+        int afterIncrement = caretListX;
+        if (!isCaretInTheBeginOfTheLine() && beforeIncrement != afterIncrement) {
+            int X = text.get(caretListY).getLine().get(caretListX - 1).getX() + 1;
+            int Y = text.get(caretListY).getLine().get(caretListX - 1).getY() - 1;
+            for (Line line : text.getText()) {
                 for (Char charElement : line.getLine()) {
                     if (!charElement.isSelect()) {
                         charElement.setIsSelect(charElement.isElementHere(new Point(X, Y)));
                     } else if (charElement.isElementHere(new Point(X, Y))) {
-                        if (text.indexOf(line) == text.size() - 1 && line.getLine().indexOf(charElement) == line.size() - 1) {
+                        if (text.getText().indexOf(line) == text.getText().size() - 1 && line.getLine().indexOf(charElement) == line.size() - 1) {
                             charElement.setIsSelect(true);
                         } else {
                             charElement.setIsSelect(false);
@@ -160,12 +160,12 @@ public class Caret {
 
     }
     public void upSelection() {
-        int firstX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
-        int firstY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
-        caret.decrementY();
-        int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
-        int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
-        for (Line line : text) {
+        int firstX = text.get(caretListY).getLine().get(caretListX - 1).getX() + 1;
+        int firstY = text.get(caretListY).getLine().get(caretListX - 1).getY() - 1;
+        decrementY();
+        int secondX = text.get(caretListY).getLine().get(caretListX - 1).getX() + 1;
+        int secondY = text.get(caretListY).getLine().get(caretListX - 1).getY() - 1;
+        for (Line line : text.getText()) {
             for (Char charElement : line.getLine()) {
                 if (!charElement.isSelect()) {
                     charElement.setIsSelect((charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))));
@@ -176,12 +176,12 @@ public class Caret {
         }
     }
     public void downSelection() {
-        int firstX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
-        int firstY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
-        caret.incrementY();
-        int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
-        int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
-        for (Line line : text) {
+        int firstX = text.get(caretListY).getLine().get(caretListX - 1).getX() + 1;
+        int firstY = text.get(caretListY).getLine().get(caretListX - 1).getY() - 1;
+      incrementY();
+        int secondX = text.get(caretListY).getLine().get(caretListX - 1).getX() + 1;
+        int secondY = text.get(caretListY).getLine().get(caretListX - 1).getY() - 1;
+        for (Line line : text.getText()) {
             for (Char charElement : line.getLine()) {
                 if (!charElement.isSelect()) {
                     charElement.setIsSelect(charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY)));
@@ -191,22 +191,35 @@ public class Caret {
             }
         }
     }
-
+    public void newLine() {
+        Line newLine = text.get(caretListY).copyFromX1toX2(caretListX, text.get(caretListY).size());
+        text.getText().get(caretListY).remove(caretListX, text.get(caretListY).size());
+        text.getText().add(caretListY + 1, newLine);
+        setCaretListX(0);
+        incrementY();
+    }
     private boolean isCaretInTheBeginOfText() {
         return caretListY == 0 && caretListX == 0;
     }
     private boolean isCaretInTheEndOfText() {
         return caretListY == text.getText().size() - 1 && caretListX == text.getText().get(getCaretListY()).size();
     }
+
+    private boolean isCaretInTheEndOfLine() {
+        return caretListX == text.getText().get(caretListY).size();
+    }
+
     private boolean isCaretBeforeTheLastLine() {
         return caretListY < text.getText().size() - 1;
     }
+
     private boolean isCaretBeforeTheLineEnd() {
         return caretListX < text.getText().get(getCaretListY()).size();
     }
     private boolean isCaretAfterTheLineEnd() {
         return caretListX > text.getText().get(getCaretListY()).size();
     }
+
     private boolean isCaretInTheFirstLine() {
         return caretListY == 0;
     }

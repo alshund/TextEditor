@@ -21,16 +21,16 @@ public class CaretHandler implements KeyListener{
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
-            textPanel.falseAlSelection();
+            textPanel.getText().falseAlSelection();
             caret.decrementX();
         } else if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_UP){
-            textPanel.falseAlSelection();
+            textPanel.getText().falseAlSelection();
             caret.decrementY();
         } else if(!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
-            textPanel.falseAlSelection();
+            textPanel.getText().falseAlSelection();
             caret.incrementX();
         } else if(!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_DOWN){
-            textPanel.falseAlSelection();
+            textPanel.getText().falseAlSelection();
             caret.incrementY();
         }
     }

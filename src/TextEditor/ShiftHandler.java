@@ -7,22 +7,22 @@ import java.awt.event.KeyListener;
  * Created by shund on 13.03.2017.
  */
 public class ShiftHandler implements KeyListener {
-    private Text text;
-    public ShiftHandler(Text text){
-        this.text = text;
+    private Caret caret;
+    public ShiftHandler(FrameWindow frameWindow){
+        this.caret = frameWindow.getTextPanel().getCaret();
     }
     @Override
     public void keyTyped(KeyEvent keyEvent) {}
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (isLeftSelection(keyEvent)){
-            text.leftSelection();
+            caret.leftSelection();
         } else if (isUpSelection(keyEvent)){
-            text.upSelection();
+            caret.upSelection();
         } else if(isRightSelection(keyEvent)){
-            text.rightSelection();
+            caret.rightSelection();
         } else if (isDownSelection(keyEvent)){
-            text.downSelection();
+            caret.downSelection();
         }
     }
 

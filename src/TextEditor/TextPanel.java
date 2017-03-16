@@ -35,7 +35,7 @@ public class TextPanel extends JComponent {
     }
 
     private void setFont(Graphics2D graphics2D){
-        for (Line line : text){
+        for (Line line : text.getText()){
             for (Char charElement : line.getLine()){
                 FontMetrics fontMetrics = graphics2D.getFontMetrics();
                 line.setMaxHigh(fontMetrics.getHeight());
@@ -106,7 +106,7 @@ public class TextPanel extends JComponent {
     }
 
     public void createInput(){
-        text = new Text(getCaret());
+        text = new Text();
         caret = new Caret(getText());
         CaretTimer caretTimer = new CaretTimer(this);
         Line newLine = new Line(frameWindow);
@@ -117,11 +117,11 @@ public class TextPanel extends JComponent {
 
 
     public void mouseClick(Point point){
-        for (Line line: text){
+        for (Line line: text.getText()){
             line.borderOfLine(point);
             for (Char charElement : line.getLine()){
                 if(charElement.isElementHere(point)){
-                    caret.setCaretListY(text.indexOf(line));
+                    caret.setCaretListY(text.getText().indexOf(line));
                     caret.setCaretListX(line.indexOf(charElement) + 1);
                 }
             }
@@ -129,12 +129,12 @@ public class TextPanel extends JComponent {
         frameWindow.unloadFrameWindow();
     }
     public void mouseClick (Point firstClick, Point secondClick){
-        for (Line line: text){
+        for (Line line: text.getText()){
             line.borderOfLine(secondClick);
             for (Char charElement: line.getLine()){
                 charElement.setIsSelect(charElement.isElementHere(firstClick, secondClick));
                 if (charElement.isElementHere(secondClick)){
-                    caret.setCaretListY(text.indexOf(line));
+                    caret.setCaretListY(text.getText().indexOf(line));
                     caret.setCaretListX(line.indexOf(charElement) + 1);
                 }
             }
