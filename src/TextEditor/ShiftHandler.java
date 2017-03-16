@@ -15,7 +15,7 @@ public class ShiftHandler implements KeyListener {
     public void keyTyped(KeyEvent keyEvent) {}
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_LEFT){
+        if (isLeftSelection(keyEvent)){
             textPanel.leftSelection();
         } else if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_UP){
             textPanel.upSelection();
@@ -25,6 +25,11 @@ public class ShiftHandler implements KeyListener {
             textPanel.downSelection();
         }
     }
+
+    private boolean isLeftSelection(KeyEvent keyEvent) {
+        return keyEvent.isShiftDown() && keyEvent.getKeyCode() == keyEvent.VK_LEFT;
+    }
+
     @Override
     public void keyReleased(KeyEvent keyEvent) {}
 }

@@ -23,14 +23,13 @@ public class KeyHandler implements KeyListener {
         if(!keyEvent.isControlDown() && !isSystemKey(keyEvent)){
             textPanel.insertKeyChar(keyEvent.getKeyChar());
         }
+        frameWindow.unloadFrameWindow();
     }
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER){
             textPanel.enterKey();
         }
-//        textPanel.getCaret().followCaret();
-        frameWindow.unloadFrameWindow();
     }
 
     @Override

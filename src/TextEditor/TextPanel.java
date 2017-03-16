@@ -209,7 +209,8 @@ public class TextPanel extends JComponent {
         int beforeIncrement = caret.getCaretListX();
         caret.incrementX();
         int afterIncrement = caret.getCaretListX();
-        if (caret.getCaretListX() != 0 && beforeIncrement != afterIncrement){
+        boolean b = caret.getCaretListX() != 0 && beforeIncrement != afterIncrement;
+        if (b){
             int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
             int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
             for (Line line : text){
@@ -233,9 +234,10 @@ public class TextPanel extends JComponent {
         int beforeDecrement = caret.getCaretListX();
         caret.decrementX();
         int afterDecrement = caret.getCaretListX();
-        if (caret.getCaretListX() != text.get(caret.getCaretListY()).getLine().size() && beforeDecrement != afterDecrement){
-            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getX() + 1;
-            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getY() - 1;
+        List<Char> line1 = text.get(caret.getCaretListY()).getLine();
+        if (caret.getCaretListX() != line1.size() && beforeDecrement != afterDecrement){
+            int X = line1.get(caret.getCaretListX()).getX() + 1;
+            int Y = line1.get(caret.getCaretListX()).getY() - 1;
             for (Line line : text){
                 for (Char charElement : line.getLine()){
                     if (!charElement.isSelect()){

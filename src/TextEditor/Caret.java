@@ -102,14 +102,4 @@ public class Caret {
         }
     }
 
-    public void followCaret(){
-        int x = 0;
-        if(getCaretListX() > frameWindow.getFrameWindow().getWidth()){
-            x = textPanel.getCaret().getCaretCoordinateX();
-        }
-        int y = textPanel.getCaret().getCaretCoordinateY() - textPanel.getText().get(textPanel.getCaret().getCaretListY()).getMaxHigh();
-        JViewport scrollP = frameWindow.getScrollPane().getViewport();
-        scrollP.setViewPosition(new Point(x, y));
-        frameWindow.getScrollPane().setViewport(scrollP);
-    }
 }
