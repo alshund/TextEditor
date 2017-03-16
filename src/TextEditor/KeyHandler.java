@@ -21,7 +21,7 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyTyped(KeyEvent keyEvent) {
         if(!keyEvent.isControlDown() && !isSystemKey(keyEvent)){
-            textPanel.insertKeyChar(keyEvent.getKeyChar());
+            textPanel.unicodeKey(keyEvent.getKeyChar());
         }
         frameWindow.unloadFrameWindow();
     }
