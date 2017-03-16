@@ -107,7 +107,7 @@ public class TextPanel extends JComponent {
 
     public void createInput(){
         text = new Text(getCaret());
-        caret = new Caret(frameWindow);
+        caret = new Caret(getText());
         CaretTimer caretTimer = new CaretTimer(this);
         Line newLine = new Line(frameWindow);
         text.add(newLine);
