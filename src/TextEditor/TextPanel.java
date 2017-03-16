@@ -142,32 +142,6 @@ public class TextPanel extends JComponent {
         frameWindow.unloadFrameWindow();
     }
 
-    public void unicodeKey(char unicodeElement){
-        text.insertKeyChar(unicodeElement);
-    }
-    public void enterKey(){
-        text.deleteSelectedText();
-        text.enterLine();
-    }
-    public void deleteKey(){
-        if(!text.deleteSelectedText()){
-            text.deleteNextChar();
-        }
-    }
-    public void backSpaceKey(){
-       if(!text.deleteSelectedText()){
-           text.deletePreviousChar();
-       }
-    }
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -30,8 +30,8 @@ public class Text {
     }
 
     public void enterLine() {
-        int Y = caret.getCaretListY();
         int X = caret.getCaretListX();
+        int Y = caret.getCaretListY();
         Line newLine = text.get(Y).copyFromX1toX2(X, text.get(Y).size());
         text.get(Y).remove(X, text.get(Y).size());
         text.add(Y + 1, newLine);

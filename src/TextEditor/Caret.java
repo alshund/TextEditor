@@ -7,18 +7,14 @@ import java.awt.*;
  * Created by shund on 01.03.2017.
  */
 public class Caret {
-    private FrameWindow frameWindow;
-    private TextPanel textPanel;
-    private Font caretFont;
+    private Text text;
     private int caretListX;
     private int caretListY;
     private int caretCoordinateX;
     private int caretCoordinateY;
-
-
-    public Caret(FrameWindow frameWindow){
-        this.frameWindow = frameWindow;
-        textPanel = frameWindow.getTextPanel();
+    
+    public Caret(Text text){
+        this.text = text;
         caretCoordinateX = 10;
         caretCoordinateY = 10;
     }
@@ -52,22 +48,35 @@ public class Caret {
 
 
     public void incrementX(){
-        if (caretListY == textPanel.getText().size() - 1 && caretListX == textPanel.getText().get(getCaretListY()).size()){
-        } else if (caretListX < textPanel.getText().get(getCaretListY()).size()){
+        if (isCaretInTheEndOfText()){
+        } else if (isCaretBeforeTheLineEnd()){
             caretListX++;
-        } else if(caretListY < textPanel.getText().size() - 1){
+        } else if(isCaretBeforeTheTextEnd()){
             caretListY++;
             setCaretListX(0);
         }
     }
+
+    private boolean isCaretBeforeTheTextEnd() {
+        return caretListY < text.getText().size() - 1;
+    }
+
+    private boolean isCaretBeforeTheLineEnd() {
+        return caretListX < text.getText().get(getCaretListY()).size();
+    }
+
+    private boolean isCaretInTheEndOfText() {
+        return caretListY == text.getText().size() - 1 && caretListX == text.getText().get(getCaretListY()).size();
+    }
+
     public void incrementY(){
-        if(caretListY < textPanel.getText().size() - 1){
+        if(isCaretYBeforeTheTextEnd()){
             caretListY++;
-            if (caretListX > textPanel.getText().get(getCaretListY()).size()){
-                setCaretListX(textPanel.getText().get(getCaretListY()).size());
+            if (caretListX > text.getText().get(getCaretListY()).size()){
+                setCaretListX(text.getText().get(getCaretListY()).size());
             }
         } else {
-            setCaretListX(textPanel.getText().get(caretListY).getLine().size());
+            setCaretListX(text.getText().get(caretListY).getLine().size());
         }
     }
     public void decrementX(){
@@ -76,15 +85,15 @@ public class Caret {
             caretListX--;
         }else if (caretListY != 0){
             caretListY--;
-            setCaretListX(textPanel.getText().get(getCaretListY()).size());
+            setCaretListX(text.getText().get(getCaretListY()).size());
         }
 
     }
     public void decrementY(){
         if(caretListY != 0){
             caretListY--;
-            if (caretListX > textPanel.getText().get(getCaretListY()).size()){
-                setCaretListX(textPanel.getText().get(getCaretListY()).size());
+            if (caretListX > text.getText().get(getCaretListY()).size()){
+                setCaretListX(text.getText().get(getCaretListY()).size());
             }
         } else{
             setCaretListX(0);

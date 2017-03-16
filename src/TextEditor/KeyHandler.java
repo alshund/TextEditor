@@ -11,25 +11,27 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
     private FrameWindow frameWindow;
-    private TextPanel textPanel;
+    private Text text;
 
     public KeyHandler(FrameWindow frameWindow) {
         this.frameWindow = frameWindow;
-        textPanel = frameWindow.getTextPanel();
+        this.text = frameWindow.getTextPanel().getText();
     }
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
         if(!keyEvent.isControlDown() && !isSystemKey(keyEvent)){
-            textPanel.unicodeKey(keyEvent.getKeyChar());
+            text.deleteSelectedText();
+            text.insertKeyChar(keyEvent.getKeyChar());
         }
-        frameWindow.unloadFrameWindow();
     }
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER){
-            textPanel.enterKey();
+            text.deleteSelectedText();
+            text.enterLine();
         }
+        frameWindow.unloadFrameWindow();
     }
 
     @Override
