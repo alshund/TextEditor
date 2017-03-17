@@ -68,7 +68,7 @@ public class Caret {
                     text.get(caretListY - 1).getLine().add(charElement);
                 }
             }
-            text.remove(caretListY);
+            text.removeLine(caretListY);
             decrementY();
         } else {
             text.get(caretListY).remove(caretListX - 1, caretListX);
@@ -83,7 +83,7 @@ public class Caret {
                     text.get(caretListY).add(charElement);
                 }
             }
-            text.remove(caretListY + 1);
+            text.removeLine(caretListY + 1);
         } else {
             text.get(caretListY).remove(caretListX, caretListX + 1);
         }

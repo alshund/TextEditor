@@ -13,32 +13,29 @@ public class Text {
     public Text(){
 
     }
-
-    public List<Line> getText() {
-        return text;
-    }
-
     public void insertKeyChar(char charKey, int X, int Y){
         text.get(Y).addChar(X, charKey);
     }
-
     public void add(Line line){
         text.add(line);
     }
-
-
-    public Line get(int Y){
-        return text.get(Y);
-    }
-    public void remove(int Y){
-        text.remove(Y);
-    }
-
     public void falseAlSelection(){
         for (Line line : text){
             for (Char charElement : line.getLine()){
                 charElement.setIsSelect(false);
             }
         }
+    }
+
+
+    public List<Line> getText() {
+        return text;
+    }
+    public Line get(int Y){
+        return text.get(Y);
+    }
+
+    public void removeLine(int Y){
+        text.remove(Y);
     }
 }
