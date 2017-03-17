@@ -21,15 +21,15 @@ public class Caret {
 
     public void incrementX(){
         if (isCaretInTheEndOfText()){
-        } else if (isCaretBeforeTheLineEnd()){
+        } else if (!isCaretInTheEndOfLine()){
             caretListX++;
-        } else if(isCaretBeforeTheLastLine()){
+        } else if(!isCaretInTheLastLine()){
             caretListY++;
             setCaretListX(0);
         }
     }
     public void incrementY(){
-        if(isCaretBeforeTheLastLine()){
+        if(!isCaretInTheLastLine()){
             caretListY++;
             if (isCaretAfterTheLineEnd()){
                 setCaretListX(text.getText().get(getCaretListY()).size());
@@ -198,6 +198,7 @@ public class Caret {
         setCaretListX(0);
         incrementY();
     }
+
     private boolean isCaretInTheBeginOfText() {
         return caretListY == 0 && caretListX == 0;
     }
@@ -205,26 +206,22 @@ public class Caret {
         return caretListY == text.getText().size() - 1 && caretListX == text.getText().get(getCaretListY()).size();
     }
 
-    private boolean isCaretInTheEndOfLine() {
-        return caretListX == text.getText().get(caretListY).size();
-    }
-
-    private boolean isCaretBeforeTheLastLine() {
-        return caretListY < text.getText().size() - 1;
-    }
-
-    private boolean isCaretBeforeTheLineEnd() {
-        return caretListX < text.getText().get(getCaretListY()).size();
-    }
-    private boolean isCaretAfterTheLineEnd() {
-        return caretListX > text.getText().get(getCaretListY()).size();
-    }
-
     private boolean isCaretInTheFirstLine() {
         return caretListY == 0;
     }
     private boolean isCaretInTheBeginOfTheLine() {
         return caretListX == 0;
+    }
+
+    private boolean isCaretInTheLastLine() {
+        return caretListY == text.getText().size() - 1;
+    }
+    private boolean isCaretInTheEndOfLine() {
+        return caretListX == text.getText().get(caretListY).size();
+    }
+
+    private boolean isCaretAfterTheLineEnd() {
+        return caretListX > text.getText().get(getCaretListY()).size();
     }
 
     public int getCaretListX(){
