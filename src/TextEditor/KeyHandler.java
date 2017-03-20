@@ -8,19 +8,21 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
     private FrameWindow frameWindow;
+    private TextPanel textPanel;
     private Text text;
     private Caret caret;
 
     public KeyHandler(FrameWindow frameWindow) {
         this.frameWindow = frameWindow;
         this.text = frameWindow.getTextPanel().getText();
-        this.caret = frameWindow.getTextPanel().getCaret();
+        this.textPanel = frameWindow.getTextPanel();
+        this.caret = textPanel.getCaret();
     }
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
         if(!keyEvent.isControlDown() && !isSystemKey(keyEvent)){
-            caret.deleteSelectedText();
+            textPanel.deleteSelectedText();
             text.insertKeyChar(keyEvent.getKeyChar(), caret.getCaretListX(), caret.getCaretListY());
             caret.incrementX();
         }
@@ -30,8 +32,8 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER){
-            caret.deleteSelectedText();
-            caret.newLine();
+            textPanel.deleteSelectedText();
+            textPanel.newLine();
         }
         frameWindow.unloadFrameWindow();
 

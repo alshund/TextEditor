@@ -2,37 +2,24 @@ package TextEditor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.geom.Rectangle2D;
+import java.util.*;
 
 /**
  * Created by shund on 28.02.2017.
  */
 public class TextPanel extends JComponent {
     private FrameWindow frameWindow;
-    private Caret caret;
     private Text text;
+    private Caret caret;
 
     public TextPanel (FrameWindow frameWindow){
         this.frameWindow = frameWindow;
     }
 
-    public Text getText(){
-        return text;
-    }
-
-
-    public void drawCaret(){
-        Graphics2D graphics2D = (Graphics2D) this.getGraphics();
-        graphics2D.drawString("|", caret.getCaretCoordinateX(), caret.getCaretCoordinateY());
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        graphics2D.setColor(this.getBackground());
-        graphics2D.drawString("|", caret.getCaretCoordinateX(), caret.getCaretCoordinateY());
-//        textPanel.repaint();
-    }
 
     private void setFont(Graphics2D graphics2D){
         for (Line line : text.getText()){
@@ -101,10 +88,19 @@ public class TextPanel extends JComponent {
         setFont(graphics2D);
         paintChar(graphics2D);
     }
-
-    public Caret getCaret(){
-        return caret;
+    public void drawCaret(){
+        Graphics2D graphics2D = (Graphics2D) this.getGraphics();
+        graphics2D.drawString("|", caret.getCaretCoordinateX(), caret.getCaretCoordinateY());
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        graphics2D.setColor(this.getBackground());
+        graphics2D.drawString("|", caret.getCaretCoordinateX(), caret.getCaretCoordinateY());
+//        textPanel.repaint();
     }
+
 
     public void createInput(){
         text = new Text();
@@ -114,9 +110,207 @@ public class TextPanel extends JComponent {
         text.add(newLine);
     }
 
+    public void deletePreviousChar() {
+        if (caret.isCaretInTheBeginOfText()) {
+        } else if (caret.isCaretInTheBeginOfTheLine()) {
+            caret.setCaretListX(text.get(caret.getCaretListY() - 1).size());
+            if (text.get(caret.getCaretListY()).size() != 0) {
+                for (Char charElement : text.getText().get(caret.getCaretListY()).getLine()) {
+                    text.get(caret.getCaretListY() - 1).getLine().add(charElement);
+                }
+            }
+            text.removeLine(caret.getCaretListY());
+            caret.decrementY();
+        } else {
+            text.get(caret.getCaretListY()).remove(caret.getCaretListX() - 1, caret.getCaretListY());
+            caret.decrementX();
+        }
+    }
+    public void deleteNextChar() {
+        if (caret.isCaretInTheEndOfText()) {
+        } else if (caret.isCaretInTheEndOfLine()) {
+            if (text.get(caret.getCaretListY() + 1).size() != 0) {
+                for (Char charElement : text.get(caret.getCaretListY() + 1).getLine()) {
+                    text.get(caret.getCaretListY()).add(charElement);
+                }
+            }
+            text.removeLine(caret.getCaretListY() + 1);
+        } else {
+            text.get(caret.getCaretListY()).remove(caret.getCaretListX(), caret.getCaretListX() + 1);
+        }
+    }
+    public boolean deleteSelectedText() {
+        boolean newLine = false;
+        for (int indexY = 0; indexY < text.getText().size(); indexY++) {
+            newLine = true;
+            int indexX = 0;
+            while (indexX != text.get(indexY).getLine().size()) {
+                if (text.get(indexY).getLine().get(indexX).isSelect()) {
+                    if (newLine) {
+                        caret.setCaretListX(indexX);
+                        caret.setCaretListY(indexY);
+                        newLine = false;
+                    }
+                    deleteNextChar();
+                    indexX--;
+                }
+                indexX++;
+                if (!newLine && caret.isCaretInTheEndOfLine()) {
+                    deleteNextChar();
+                }
+            }
+        }
+        return !newLine;
+    }
+
+    public void leftSelection() {
+        int beforeDecrement = caret.getCaretListX();
+        caret.decrementX();
+        int afterDecrement = caret.getCaretListX();
+        java.util.List<Char> line1 = text.get(caret.getCaretListY()).getLine();
+        if (!caret.isCaretInTheEndOfLine() && beforeDecrement != afterDecrement) {
+            int X = line1.get(caret.getCaretListX()).getX() + 1;
+            int Y = line1.get(caret.getCaretListX()).getY() - 1;
+            for (Line line : text.getText()) {
+                for (Char charElement : line.getLine()) {
+                    if (!charElement.isSelect()) {
+                        charElement.setIsSelect(charElement.isElementHere(new Point(X, Y)));
+                    } else if (charElement.isElementHere(new Point(X, Y))) {
+                        if (text.getText().indexOf(line) == 0 && line.indexOf(charElement) == 0) {
+                            charElement.setIsSelect(true);
+                        } else {
+                            charElement.setIsSelect(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void rightSelection() {
+        int beforeIncrement = caret.getCaretListX();
+        caret.incrementX();
+        int afterIncrement = caret.getCaretListX();
+        if (!caret.isCaretInTheBeginOfTheLine() && beforeIncrement != afterIncrement) {
+            int X = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+            int Y = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+            for (Line line : text.getText()) {
+                for (Char charElement : line.getLine()) {
+                    if (!charElement.isSelect()) {
+                        charElement.setIsSelect(charElement.isElementHere(new Point(X, Y)));
+                    } else if (charElement.isElementHere(new Point(X, Y))) {
+                        if (text.getText().indexOf(line) == text.getText().size() - 1 && line.getLine().indexOf(charElement) == line.size() - 1) {
+                            charElement.setIsSelect(true);
+                        } else {
+                            charElement.setIsSelect(false);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    public void upSelection() {
+        int firstX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int firstY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        caret.decrementY();
+        int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        for (Line line : text.getText()) {
+            for (Char charElement : line.getLine()) {
+                if (!charElement.isSelect()) {
+                    charElement.setIsSelect((charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))));
+                } else if (charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))) {
+                    charElement.setIsSelect(false);
+                }
+            }
+        }
+    }
+    public void downSelection() {
+        int firstX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int firstY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        caret.incrementY();
+        int secondX = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getX() + 1;
+        int secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
+        for (Line line : text.getText()) {
+            for (Char charElement : line.getLine()) {
+                if (!charElement.isSelect()) {
+                    charElement.setIsSelect(charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY)));
+                } else if (charElement.isElementHere(new Point(firstX, firstY), new Point(secondX, secondY))) {
+                    charElement.setIsSelect(false);
+                }
+            }
+        }
+    }
+
+    public void newLine() {
+        Line newLine = text.get(caret.getCaretListY()).copyFromX1toX2(caret.getCaretListX(), text.get(caret.getCaretListY()).size());
+        text.getText().get(caret.getCaretListY()).remove(caret.getCaretListX(), text.get(caret.getCaretListY()).size());
+        text.getText().add(caret.getCaretListY() + 1, newLine);
+        caret.setCaretListX(0);
+        caret.incrementY();
+    }
 
 
+    public void copy() {
+        String string = "";
+        for (Line line : text.getText()){
+            for (Char charElement : line.getLine()){
+                if (charElement.isSelect()){
+                    string += charElement.getStringElement();
+                }
+            }
+            if (line.getLine().size() != 0 && line.getLine().get(line.getLine().size()-1).isSelect()){
+                string += "\n";
+            }
+        }
+        StringSelection data = new StringSelection(string);
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(data, null);
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, "Can't copy text", "ERROR", JOptionPane.ERROR_MESSAGE|JOptionPane.OK_OPTION);
+        }
+    }
+    public void paste() {
+        try{
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String string = (String) clipboard.getData(DataFlavor.stringFlavor);
+            deleteSelectedText();
+            for (int index = 0; index < string.length(); index++){
+                if (string.charAt(index) == '\n'){
+                    newLine();
+                } else{
+                    text.getText().get(caret.getCaretListY()).addChar(caret.getCaretListX(), string.charAt(index));
+                    caret.incrementX();
+                }
+            }
 
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Can't past text", "ERROR", JOptionPane.ERROR_MESSAGE|JOptionPane.OK_OPTION);
+        }
+    }
+
+    public void cut(){
+        String string = "";
+        for (Line line : text.getText()){
+            for (Char charElement : line.getLine()){
+                if (charElement.isSelect()){
+                    string += charElement.getStringElement();
+                }
+            }
+            if (line.getLine().size() != 0 && line.getLine().get(line.getLine().size()-1).isSelect()){
+                string += "\n";
+            }
+        }
+        StringSelection data = new StringSelection(string);
+        try {
+            deleteSelectedText();
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(data, null);
+        } catch (Exception e){
+            JOptionPane.showMessageDialog(null, "Can't copy text", "ERROR", JOptionPane.ERROR_MESSAGE|JOptionPane.OK_OPTION);
+        }
+    }
 
 
 
@@ -151,6 +345,11 @@ public class TextPanel extends JComponent {
         frameWindow.unloadFrameWindow();
     }
 
-
+    public Text getText(){
+        return text;
+    }
+    public Caret getCaret(){
+        return caret;
+    }
 
 }

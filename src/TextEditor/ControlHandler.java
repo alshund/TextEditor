@@ -9,9 +9,9 @@ import java.io.IOException;
  * Created by shund on 20.03.2017.
  */
 public class ControlHandler implements KeyListener {
-    Caret caret;
+    private TextPanel textPanel;
     public ControlHandler(FrameWindow frameWindow){
-        caret = frameWindow.getTextPanel().getCaret();
+        textPanel = frameWindow.getTextPanel();
     }
     @Override
     public void keyTyped(KeyEvent keyEvent) {
@@ -21,10 +21,11 @@ public class ControlHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_C){
-            caret.copy();
+            textPanel.copy();
         }else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_V){
-            caret.paste();
+            textPanel.paste();
         }else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_X){
+            textPanel.cut();
 
         }
     }
