@@ -109,7 +109,7 @@ public class TextPanel extends JComponent {
         text = new Text();
         caret = new Caret(getText());
         CaretTimer caretTimer = new CaretTimer(this);
-        Line newLine = new Line(frameWindow);
+        Line newLine = new Line(    );
         text.add(newLine);
     }
 
@@ -118,7 +118,7 @@ public class TextPanel extends JComponent {
 
     public void mouseClick(Point point){
         for (Line line: text.getText()){
-            line.borderOfLine(point);
+            caret.borderOfLine(point, line);
             for (Char charElement : line.getLine()){
                 if(charElement.isElementHere(point)){
                     caret.setCaretListY(text.getText().indexOf(line));
@@ -130,7 +130,7 @@ public class TextPanel extends JComponent {
     }
     public void mouseClick (Point firstClick, Point secondClick){
         for (Line line: text.getText()){
-            line.borderOfLine(secondClick);
+            caret.borderOfLine(secondClick, line);
             for (Char charElement: line.getLine()){
                 charElement.setIsSelect(charElement.isElementHere(firstClick, secondClick));
                 if (charElement.isElementHere(secondClick)){

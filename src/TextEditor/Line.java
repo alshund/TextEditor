@@ -8,9 +8,6 @@ import java.util.List;
  * Created by shund on 28.02.2017.
  */
 public class Line {
-    private FrameWindow frameWindow;
-    private TextPanel textPanel;
-    private Caret caret;
     private List<Char> line = new LinkedList<Char>();
     private int maxHigh;
     private int maxLength;
@@ -18,13 +15,9 @@ public class Line {
     private int coordinateY;
 
 
-    public Line(FrameWindow frameWindow) {
-        this.frameWindow = frameWindow;
-        textPanel = frameWindow.getTextPanel();
-        caret = textPanel.getCaret();
+    public Line() {
         maxHigh = 16;
         maxLength = 0;
-
     }
 
     public List<Char> getLine(){
@@ -63,18 +56,13 @@ public class Line {
     }
 
     public void addChar(int coordinateX, char charElement){
-        line.add(coordinateX, new Char(charElement, frameWindow));
+        line.add(coordinateX, new Char(charElement));
         System.out.println(coordinateX + "-" + charElement);
     }
     public void add(Char charElement){
         line.add(charElement);
     }
-    public void borderOfLine(Point click){
-        if (coordinateY - maxHigh <= click.getY()/* && coordinateY >= click.getY() && maxLength <= click.getX()*/){
-            caret.setCaretListY(numberOfLine);
-            caret.setCaretListX(click.getX() <= 10 && coordinateY >= click.getY() ? 0 : line.size());
-        }
-    }
+
     public void remove(int x, int y){
         int index = x;
         while(index < y){
@@ -83,7 +71,7 @@ public class Line {
         }
     }
     public Line copyFromX1toX2(int x1, int x2){
-        Line newLine = new Line(frameWindow);
+        Line newLine = new Line();
         for (int index = x1; index < x2; index++){
             newLine.add(this.line.get(index));
         }

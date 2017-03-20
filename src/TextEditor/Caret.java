@@ -198,6 +198,13 @@ public class Caret {
         setCaretListX(0);
         incrementY();
     }
+    public void borderOfLine(Point click, Line line){
+        if (line.getCoordinateY() - line.getMaxHigh() <= click.getY()/* && coordinateY >= click.getY() && maxLength <= click.getX()*/){
+            setCaretListY(line.getNumberOfLine());
+            setCaretListX(click.getX() <= 10 && line.getCoordinateY() >= click.getY() ? 0 : line.size());
+        }
+    }
+
 
     private boolean isCaretInTheBeginOfText() {
         return caretListY == 0 && caretListX == 0;

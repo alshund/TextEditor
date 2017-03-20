@@ -6,8 +6,6 @@ import java.awt.*;
  * Created by shund on 28.02.2017.
  */
 public class Char {
-    private FrameWindow frameWindow;
-    private TextPanel textPanel;
     private Font font;
     private Boolean isSelect;
     private char charElement;
@@ -17,9 +15,7 @@ public class Char {
     private int Y;
     private int numberOfLine;
 
-    public Char(char charElement, FrameWindow frameWindow){
-        this.textPanel = frameWindow.getTextPanel();
-        this.charElement = charElement;
+    public Char(char charElement){
         isSelect = false;
     }
 
