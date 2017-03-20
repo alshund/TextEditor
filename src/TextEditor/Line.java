@@ -14,7 +14,6 @@ public class Line {
     private int numberOfLine;
     private int coordinateY;
 
-
     public Line() {
         maxHigh = 16;
         maxLength = 0;
@@ -42,8 +41,10 @@ public class Line {
         return line.indexOf(charElement);
     }
 
-    public void setMaxHigh(int hight){
-        maxHigh = hight;
+    public void setMaxHigh(int maxHigh){
+        if (maxHigh > this.maxHigh){
+            this.maxHigh = maxHigh;
+        }
     }
     public void setMaxLength(int length){
         maxLength = length;

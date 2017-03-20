@@ -13,10 +13,11 @@ public class Char {
     private int wight;
     private int X;
     private int Y;
-    private int numberOfLine;
+    private int maxHeight;
 
     public Char(char charElement){
         isSelect = false;
+        this.charElement = charElement;
     }
 
     public void setX(int x){
@@ -27,6 +28,9 @@ public class Char {
     }
     public void setHeight (int height){
         this.height = height;
+    }
+    public void setMaxHeight(int maxHeight) {
+     this.maxHeight = maxHeight;
     }
     public void setWight (int wight){
         this.wight = wight;
@@ -58,19 +62,18 @@ public class Char {
                 click.getY() >= Y - height);
     }
     public boolean isElementHere (Point firstPoint, Point secondPoint){
-        int height = textPanel.getText().get(numberOfLine).getMaxHigh();
         Point upPoint = firstPoint.getY() < secondPoint.getY() ? firstPoint : secondPoint;
         Point downPoint = firstPoint.getY() < secondPoint.getY() ? secondPoint : firstPoint;
-        if (Y < downPoint.getY() || Y - height > upPoint.getY()){
-            return ((X >= upPoint.getX() && Y - height < upPoint.getY() && Y >= upPoint.getY()) ||
-                    (X <= downPoint.getX() && Y - height < downPoint.getY() && Y >= downPoint.getY()) ||
-                    (Y < downPoint.getY() && Y - height >= upPoint.getY()));
+        if (Y < downPoint.getY() || Y - maxHeight > upPoint.getY()){
+            return ((X >= upPoint.getX() && Y - maxHeight < upPoint.getY() && Y >= upPoint.getY()) ||
+                    (X <= downPoint.getX() && Y - maxHeight < downPoint.getY() && Y >= downPoint.getY()) ||
+                    (Y < downPoint.getY() && Y - maxHeight >= upPoint.getY()));
         } else{
             Point leftPoint = firstPoint.getX() < secondPoint.getX() ? firstPoint : secondPoint;
             Point rightPoint = firstPoint.getX() < secondPoint.getX() ? secondPoint : firstPoint;
-            return (X >= leftPoint.getX() && X <= rightPoint.getX()/* &&
-                    Y - height < leftPoint.getY() && Y > leftPoint.getY() &&
-                    Y - height < rightPoint.getY() && Y > rightPoint.getY()*/);
+            return (X >= leftPoint.getX() && X <= rightPoint.getX() &&
+                    Y - maxHeight < leftPoint.getY() && Y > leftPoint.getY() &&
+                    Y - maxHeight < rightPoint.getY() && Y > rightPoint.getY());
         }
     }
 

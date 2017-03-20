@@ -26,7 +26,9 @@ public class Text {
             }
         }
     }
-
+    public void removeLine(int Y){
+        text.remove(Y);
+    }
 
     public List<Line> getText() {
         return text;
@@ -35,7 +37,5 @@ public class Text {
         return text.get(Y);
     }
 
-    public void removeLine(int Y){
-        text.remove(Y);
-    }
+
 }

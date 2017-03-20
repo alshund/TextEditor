@@ -24,6 +24,8 @@ public class KeyHandler implements KeyListener {
             text.insertKeyChar(keyEvent.getKeyChar(), caret.getCaretListX(), caret.getCaretListY());
             caret.incrementX();
         }
+        frameWindow.unloadFrameWindow();
+
     }
     @Override
     public void keyPressed(KeyEvent keyEvent) {
@@ -32,6 +34,7 @@ public class KeyHandler implements KeyListener {
             caret.newLine();
         }
         frameWindow.unloadFrameWindow();
+
     }
 
     @Override

@@ -158,6 +158,7 @@ public class FrameWindow  {
         frameWindow.addKeyListener(new CaretHandler(this));
         frameWindow.addKeyListener(new DeleteHandler(this));
         frameWindow.addKeyListener(new ShiftHandler(this));
+        frameWindow.addKeyListener(new ControlHandler(this));
     }
 
     public static  void main(String[] args){

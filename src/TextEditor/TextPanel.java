@@ -39,6 +39,7 @@ public class TextPanel extends JComponent {
             for (Char charElement : line.getLine()){
                 FontMetrics fontMetrics = graphics2D.getFontMetrics();
                 line.setMaxHigh(fontMetrics.getHeight());
+                charElement.setMaxHeight(line.getMaxHigh());
             }
             if (line.getMaxHigh() == 0){
                 line.setMaxHigh(10);
@@ -112,6 +113,14 @@ public class TextPanel extends JComponent {
         Line newLine = new Line(    );
         text.add(newLine);
     }
+
+
+
+
+
+
+
+
 
 
 

@@ -1,6 +1,13 @@
 package TextEditor;
 
+import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -205,6 +212,49 @@ public class Caret {
         }
     }
 
+    public void copy() {
+        String string = "";
+        for (Line line : text.getText()){
+            for (Char charElement : line.getLine()){
+                if (charElement.isSelect()){
+                    string += charElement.getStringElement();
+                }
+            }
+            if (line.getLine().size() != 0 && line.getLine().get(line.getLine().size()-1).isSelect()){
+                string += "\n";
+            }
+        }
+        StringSelection data = new StringSelection(string);
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(data, null);
+        } catch (Exception e){
+            JOptionPane.showMessageDialog
+                    (null, "Can't copy text", "ERROR", JOptionPane.ERROR_MESSAGE|JOptionPane.OK_OPTION);
+        }
+
+
+    }
+    public void paste() {
+        try{
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            String string = (String) clipboard.getData(DataFlavor.stringFlavor);
+            for (int index = 0; index < string.length(); index++){
+                if (string.charAt(index) == '\n'){
+                    newLine();
+                } else{
+                    text.getText().get(getCaretListY()).addChar(caretListX, string.charAt(index));
+                    incrementX();
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog
+                    (null, "Can't past text", "ERROR", JOptionPane.ERROR_MESSAGE|JOptionPane.OK_OPTION);
+        }
+
+        deleteSelectedText();
+
+    }
 
     private boolean isCaretInTheBeginOfText() {
         return caretListY == 0 && caretListX == 0;
