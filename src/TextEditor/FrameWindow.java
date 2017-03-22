@@ -27,7 +27,7 @@ public class FrameWindow  {
 
         frameWindow.add(scrollPane, BorderLayout.CENTER);
 
-        textPanel.createInput();
+        textPanel.getText().createInput();
 
         addActionListener();
         frameWindow.setVisible(true);
@@ -99,15 +99,17 @@ public class FrameWindow  {
         String [] size = {"8", "9", "10", "11", "12", "14", "18", "24", "30", "36", "48", "60", "72", "96"};
         toolBar.add(createJComboBox(true, size, new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().changeFontSize(actionEvent);
+                unloadFrameWindow();
             }
         }));
         String [] font = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         toolBar.add(createJComboBox(false, font, new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().changeFontType(actionEvent);
+                unloadFrameWindow();
             }
         }));
         return toolBar;

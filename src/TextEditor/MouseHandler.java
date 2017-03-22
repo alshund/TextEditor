@@ -9,17 +9,19 @@ import java.awt.event.MouseEvent;
  * Created by shund on 05.03.2017.
  */
 public class MouseHandler implements MouseInputListener {
-    private TextPanel textPanel;
+    private FrameWindow frameWindow;
+    private Text text;
     private Point click;
 
     public MouseHandler(FrameWindow frameWindow){
-        textPanel = frameWindow.getTextPanel();
+        this.frameWindow = frameWindow;
+        text = frameWindow.getTextPanel().getText();
     }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent){
-        textPanel.getText().falseAlSelection();
-        textPanel.mouseClick(mouseEvent.getPoint());
+        text.mouseClick(mouseEvent.getPoint());
+        frameWindow.unloadFrameWindow();
     }
 
     @Override
@@ -29,14 +31,14 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-        textPanel.mouseClick(click, mouseEvent.getPoint());
+        text.mouseClick(click, mouseEvent.getPoint());
+        frameWindow.unloadFrameWindow();
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
 
     }
-
     @Override
     public void mouseExited(MouseEvent e) {
 
@@ -44,7 +46,8 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
-        textPanel.mouseClick(click, mouseEvent.getPoint());
+        text.mouseClick(click, mouseEvent.getPoint());
+        frameWindow.unloadFrameWindow();
     }
 
     @Override

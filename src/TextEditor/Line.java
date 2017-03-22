@@ -46,6 +46,9 @@ public class Line {
             this.maxHigh = maxHigh;
         }
     }
+    public void setMaxHighNumber(int n){
+        maxHigh = n;
+    }
     public void setMaxLength(int length){
         maxLength = length;
     }

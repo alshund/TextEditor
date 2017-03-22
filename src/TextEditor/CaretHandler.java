@@ -14,7 +14,7 @@ public class CaretHandler implements KeyListener{
     public CaretHandler(FrameWindow frameWindow){
         this.frameWindow = frameWindow;
         textPanel = frameWindow.getTextPanel();
-        caret = frameWindow.getTextPanel().getCaret();
+        caret = frameWindow.getTextPanel().getText().getCaret();
     }
     @Override
     public void keyTyped(KeyEvent keyEvent) {}
@@ -22,16 +22,16 @@ public class CaretHandler implements KeyListener{
     public void keyPressed(KeyEvent keyEvent) {
         if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_LEFT){
             textPanel.getText().falseAlSelection();
-            caret.decrementX();
+            textPanel.getText().decrementX();
         } else if (!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_UP){
             textPanel.getText().falseAlSelection();
-            caret.decrementY();
+            textPanel.getText().decrementY();
         } else if(!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_RIGHT){
             textPanel.getText().falseAlSelection();
-            caret.incrementX();
+            textPanel.getText().incrementX();
         } else if(!keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_DOWN){
             textPanel.getText().falseAlSelection();
-            caret.incrementY();
+            textPanel.getText().incrementY();
         }
     }
     @Override

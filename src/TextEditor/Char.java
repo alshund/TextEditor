@@ -18,6 +18,7 @@ public class Char {
     public Char(char charElement){
         isSelect = false;
         this.charElement = charElement;
+        font = new Font(Font.MONOSPACED, 0, 16);
     }
 
     public void setX(int x){
@@ -37,6 +38,9 @@ public class Char {
     }
     public void setIsSelect (boolean isSelect){
         this.isSelect = isSelect;
+    }
+    public void setFont(Font font){
+        this.font = font;
     }
 
     public int getX(){
@@ -75,6 +79,18 @@ public class Char {
                     Y - maxHeight < leftPoint.getY() && Y > leftPoint.getY() &&
                     Y - maxHeight < rightPoint.getY() && Y > rightPoint.getY());
         }
+    }
+    public void setFontType(String type){
+        font = new Font(type, 0, getFontSize());
+    }
+    public void setFontSize(int size){
+        font = new Font(getFontType(), 0, size);
+    }
+    public String getFontType(){
+        return font.getFontName();
+    }
+    public int getFontSize(){
+        return font.getSize();
     }
 
 }
