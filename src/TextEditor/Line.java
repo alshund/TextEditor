@@ -59,9 +59,9 @@ public class Line {
         this.coordinateY = coordinateY;
     }
 
-    public void addChar(int coordinateX, char charElement){
-        line.add(coordinateX, new Char(charElement));
-        System.out.println(coordinateX + "-" + charElement);
+    public void addChar(int coordinateX, char charElement, Font font){
+        line.add(coordinateX, new Char(charElement, font));
+//        System.out.println(coordinateX + "-" + charElement);
     }
     public void add(Char charElement){
         line.add(charElement);
@@ -80,6 +80,9 @@ public class Line {
             newLine.add(this.line.get(index));
         }
         return newLine;
+    }
+    public  boolean isEmpty(){
+        return line.isEmpty();
     }
 
 }

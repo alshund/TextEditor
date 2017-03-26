@@ -1,6 +1,7 @@
 package TextEditor;
 
 import java.awt.*;
+import java.awt.event.FocusAdapter;
 
 /**
  * Created by shund on 28.02.2017.
@@ -13,12 +14,12 @@ public class Char {
     private int wight;
     private int X;
     private int Y;
-    private int maxHeight;
+    private int numberOfLine;
 
-    public Char(char charElement){
+    public Char(char charElement, Font font){
         isSelect = false;
         this.charElement = charElement;
-        font = new Font(Font.MONOSPACED, 0, 16);
+        this.font = font;
     }
 
     public void setX(int x){
@@ -30,8 +31,8 @@ public class Char {
     public void setHeight (int height){
         this.height = height;
     }
-    public void setMaxHeight(int maxHeight) {
-     this.maxHeight = maxHeight;
+    public void setNumberOfLine(int numberOfLine) {
+        this.numberOfLine = numberOfLine;
     }
     public void setWight (int wight){
         this.wight = wight;
@@ -49,6 +50,15 @@ public class Char {
     public int getY(){
         return Y;
     }
+    public int getWight(){
+        return wight;
+    }
+    public  int getHeight(){
+        return height;
+    }
+    public int getNumberOfLine(){
+        return numberOfLine;
+    }
     public char getCharElement(){
         return charElement;
     }
@@ -59,38 +69,24 @@ public class Char {
         return isSelect;
     }
 
-    public boolean isElementHere (Point click){
-        return (click.getX() >= X &&
-                click.getY() <= Y &&
-                click.getX() <= X + wight &&
-                click.getY() >= Y - height);
-    }
-    public boolean isElementHere (Point firstPoint, Point secondPoint){
-        Point upPoint = firstPoint.getY() < secondPoint.getY() ? firstPoint : secondPoint;
-        Point downPoint = firstPoint.getY() < secondPoint.getY() ? secondPoint : firstPoint;
-        if (Y < downPoint.getY() || Y - maxHeight > upPoint.getY()){
-            return ((X >= upPoint.getX() && Y - maxHeight < upPoint.getY() && Y >= upPoint.getY()) ||
-                    (X <= downPoint.getX() && Y - maxHeight < downPoint.getY() && Y >= downPoint.getY()) ||
-                    (Y < downPoint.getY() && Y - maxHeight >= upPoint.getY()));
-        } else{
-            Point leftPoint = firstPoint.getX() < secondPoint.getX() ? firstPoint : secondPoint;
-            Point rightPoint = firstPoint.getX() < secondPoint.getX() ? secondPoint : firstPoint;
-            return (X >= leftPoint.getX() && X <= rightPoint.getX() &&
-                    Y - maxHeight < leftPoint.getY() && Y > leftPoint.getY() &&
-                    Y - maxHeight < rightPoint.getY() && Y > rightPoint.getY());
-        }
-    }
+
     public void setFontType(String type){
-        font = new Font(type, 0, getFontSize());
+        font = new Font(type, getFontStyle(), getFontSize());
     }
     public void setFontSize(int size){
-        font = new Font(getFontType(), 0, size);
+        font = new Font(getFontType(), getFontStyle(), size);
+    }
+    public void setFontStyle(int style){
+        font = font.deriveFont(style);
     }
     public String getFontType(){
         return font.getFontName();
     }
     public int getFontSize(){
         return font.getSize();
+    }
+    public int getFontStyle(){
+        return  font.getStyle();
     }
 
 }

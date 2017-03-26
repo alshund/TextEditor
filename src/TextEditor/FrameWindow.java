@@ -4,6 +4,7 @@ package TextEditor;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
 
 /**
  * Created by shund on 27.02.2017.
@@ -85,14 +86,16 @@ public class FrameWindow  {
         toolBar.addSeparator();
         toolBar.add(createJButton("bToolBar.png", new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
-
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().changeFontStyle(Font.BOLD);
+                unloadFrameWindow();
             }
         }));
         toolBar.add(createJButton("iToolBar.png", new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
-
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().changeFontStyle(Font.ITALIC);
+                unloadFrameWindow();
             }
         }));
         toolBar.addSeparator();
@@ -100,7 +103,9 @@ public class FrameWindow  {
         toolBar.add(createJComboBox(true, size, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                textPanel.getText().changeFontSize(actionEvent);
+                JComboBox comboBox = (JComboBox) actionEvent.getSource();
+                String fontSize = (String) comboBox.getSelectedItem();
+                textPanel.getText().changeFontSize(Integer.parseInt(fontSize));
                 unloadFrameWindow();
             }
         }));
@@ -147,15 +152,21 @@ public class FrameWindow  {
     }
 
     private void addActionListener(){
+        MouseHandler mouseHandler = new MouseHandler(this);
+        textPanel.addMouseListener(mouseHandler);
+        textPanel.addMouseMotionListener(mouseHandler);
         scrollPane.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
             @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 unloadFrameWindow();
             }
         });
-        MouseHandler mouseHandler = new MouseHandler(this);
-        textPanel.addMouseListener(mouseHandler);
-        textPanel.addMouseMotionListener(mouseHandler);
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                unloadFrameWindow();
+            }
+        });
         frameWindow.addKeyListener(new KeyHandler(this));
         frameWindow.addKeyListener(new CaretHandler(this));
         frameWindow.addKeyListener(new DeleteHandler(this));

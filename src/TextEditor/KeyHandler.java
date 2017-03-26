@@ -1,5 +1,7 @@
 package TextEditor;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -24,6 +26,9 @@ public class KeyHandler implements KeyListener {
             text.insertKeyChar(keyEvent.getKeyChar(), caret.getCaretListX(), caret.getCaretListY());
             text.incrementX();
         }
+        JViewport viewport = frameWindow.getScrollPane().getViewport();
+        viewport.setViewPosition(text.followCaret(frameWindow.getFrameWindow().getWidth()));
+        frameWindow.getScrollPane().setViewport(viewport);
         frameWindow.unloadFrameWindow();
 
     }

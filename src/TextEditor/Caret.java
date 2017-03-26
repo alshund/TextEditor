@@ -14,6 +14,7 @@ import java.util.List;
  * Created by shund on 01.03.2017.
  */
 public class Caret {
+    private Font font;
     private int caretListX;
     private int caretListY;
     private int caretCoordinateX;
@@ -48,5 +49,11 @@ public class Caret {
     }
     public void setCaretCoordinateY(int coordinateY){
         caretCoordinateY = coordinateY;
+    }
+    public void setFont(Font font){
+        this.font = font;
+    }
+    public Font getFont(){
+        return font;
     }
 }
