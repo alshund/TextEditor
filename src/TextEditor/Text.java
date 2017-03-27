@@ -168,7 +168,7 @@ public class Text {
                 secondY = text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getY() - 1;
             }
             selectElement(firstX, firstY, secondX, secondY);
-        } else if(!isCaretInTheBeginOfText()){
+        } else if(!isCaretInTheEndOfText()){
             incrementY();
         }
     }

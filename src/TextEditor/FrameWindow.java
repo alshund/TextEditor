@@ -48,12 +48,13 @@ public class FrameWindow  {
             @Override
             public void actionPerformed(ActionEvent event) {
                 fileHandler.openFile();
+                unloadFrameWindow();
             }
         }));
         fileJMenu.add(createJMenuItem("Save", "saveMenu.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-
+                fileHandler.saveXmlFile();
             }
         }));
         fileJMenu.addSeparator();

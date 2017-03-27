@@ -1,5 +1,6 @@
 package TextEditor;
 
+import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,6 +34,10 @@ public class CaretHandler implements KeyListener{
             textPanel.getText().falseAlSelection();
             textPanel.getText().incrementY();
         }
+        JViewport viewport = frameWindow.getScrollPane().getViewport();
+        viewport.setViewPosition(textPanel.getText().followCaret(frameWindow.getFrameWindow().getWidth()));
+        frameWindow.getScrollPane().setViewport(viewport);
+        frameWindow.unloadFrameWindow();
     }
     @Override
     public void keyReleased(KeyEvent keyEvent) {}

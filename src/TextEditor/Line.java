@@ -66,6 +66,9 @@ public class Line {
     public void add(Char charElement){
         line.add(charElement);
     }
+    public void add(String stringElement, String font, String style, String size){
+        line.add(new Char(stringElement.charAt(0), new Font(font, Integer.parseInt(style), Integer.parseInt(size))));
+    }
 
     public void remove(int x, int y){
         int index = x;
