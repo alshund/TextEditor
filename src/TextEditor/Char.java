@@ -70,6 +70,10 @@ public class Char {
     }
 
 
+    public Font getFont() {
+        return font;
+    }
+
     public void setFontType(String type){
         font = new Font(type, getFontStyle(), getFontSize());
     }

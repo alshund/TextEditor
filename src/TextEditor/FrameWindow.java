@@ -11,6 +11,7 @@ import java.util.Arrays;
  */
 public class FrameWindow  {
     private JFrame frameWindow;
+    private FileHandler fileHandler;
     private TextPanel textPanel;
     private JScrollPane scrollPane;
 
@@ -28,6 +29,8 @@ public class FrameWindow  {
 
         frameWindow.add(scrollPane, BorderLayout.CENTER);
 
+        fileHandler = new FileHandler(this);
+
         textPanel.getText().createInput();
 
         addActionListener();
@@ -44,7 +47,7 @@ public class FrameWindow  {
         fileJMenu.add(createJMenuItem("Open", "openMenu.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-
+                fileHandler.openFile();
             }
         }));
         fileJMenu.add(createJMenuItem("Save", "saveMenu.png", new ActionListener() {

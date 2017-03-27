@@ -79,7 +79,7 @@ public class TextPanel extends JComponent {
             int X = 10, numberOfChar = 0;
             for (Char charElement : line.getLine()){
                 graphics2D.setColor(Color.BLACK);
-                Font font = new Font(charElement.getFontType(), charElement.getFontStyle(), charElement.getFontSize());
+                Font font = charElement.getFont();
                 graphics2D.setFont(font);
                 graphics2D.drawString(charElement.getStringElement(), X, Y);
                 createSelectionArea(line, charElement, graphics2D, X, Y);
@@ -92,7 +92,7 @@ public class TextPanel extends JComponent {
             numberOfLine++;
             xMax = xMax < X ? X : xMax;
         }
-        setPreferredSize(new Dimension(xMax + 10, Y + 10));
+        setPreferredSize(new Dimension(xMax + 60, Y + 50));
     }
     protected void paintComponent(Graphics graphics) {
         Graphics2D graphics2D = (Graphics2D) graphics;
