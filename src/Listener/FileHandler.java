@@ -1,8 +1,12 @@
-package TextEditor;
+package Listener;
+
+import TextElement.Char;
+import TextEditor.FrameWindow;
+import TextElement.Line;
+import TextEditor.Text;
 
 import javax.swing.*;
 import javax.xml.stream.*;
-import java.awt.*;
 import java.io.*;
 
 /**

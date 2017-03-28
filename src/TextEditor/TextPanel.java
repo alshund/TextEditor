@@ -1,13 +1,11 @@
 package TextEditor;
 
+import TextElement.Char;
+import TextElement.Line;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
 
 /**
  * Created by shund on 28.02.2017.
@@ -23,19 +21,22 @@ public class TextPanel extends JComponent {
     }
 
     private void setFont(Graphics2D graphics2D){
+        int leading = 0;
         for (Line line : text.getText()){
             line.setMaxHighNumber(0);
             for (Char charElement : line.getLine()){
                 Font font = new Font(charElement.getFontType(), charElement.getFontStyle(), charElement.getFontSize());
                 graphics2D.setFont(font);
-                FontMetrics fontMetrics = graphics2D.getFontMetrics(font);
-                line.setMaxHigh(charElement.getFontSize());
+                FontMetrics fontMetrics = graphics2D.getFontMetrics();
+                line.setMaxLeading(fontMetrics.getDescent());
+                line.setMaxHigh(charElement.getFontSize() + leading);
             }
             if (line.getMaxHigh() == 0){
-//                FontMetrics fontMetrics = graphics2D.getFontMetrics(text.getFont());
+                FontMetrics fontMetrics = graphics2D.getFontMetrics(text.getFont());
                 Font font = text.getFont();
                 line.setMaxHighNumber(font.getSize());
             }
+            leading = line.getMaxLeading();
         }
     }
     private int setChar(Char charElement, int X, int Y, int numberOfLine, Graphics2D graphics2D){

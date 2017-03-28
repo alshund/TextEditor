@@ -1,4 +1,7 @@
-package TextEditor;
+package Listener;
+
+import TextEditor.FrameWindow;
+import TextEditor.Text;
 
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;

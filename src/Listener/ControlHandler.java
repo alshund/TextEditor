@@ -1,4 +1,7 @@
-package TextEditor;
+package Listener;
+
+import TextEditor.FrameWindow;
+import TextEditor.Text;
 
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;

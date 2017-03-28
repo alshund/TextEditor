@@ -1,4 +1,4 @@
-package TextEditor;
+package TextElement;
 
 import java.awt.*;
 import java.awt.event.FocusAdapter;

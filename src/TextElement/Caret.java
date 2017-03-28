@@ -1,4 +1,4 @@
-package TextEditor;
+package TextElement;
 
 import javax.swing.*;
 import javax.tools.Tool;
