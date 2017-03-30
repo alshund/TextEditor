@@ -11,19 +11,25 @@ import java.awt.event.KeyListener;
  */
 public class DeleteHandler implements KeyListener {
     private Text text;
-    public DeleteHandler(FrameWindow frameWindow){
+
+    public DeleteHandler(FrameWindow frameWindow) {
         text = frameWindow.getTextPanel().getText();
     }
+
     @Override
-    public void keyTyped(KeyEvent keyEvent) {}
+    public void keyTyped(KeyEvent keyEvent) {
+    }
+
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getKeyCode() == KeyEvent.VK_BACK_SPACE){
-            if (!text.deleteSelectedText()) text.deletePreviousChar();
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DELETE){
-            if (!text.deleteSelectedText()) text.deleteNextChar();
+        if (keyEvent.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            text.backSpaceKey();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DELETE) {
+            text.deleteKey();
         }
     }
+
     @Override
-    public void keyReleased(KeyEvent keyEvent) {}
+    public void keyReleased(KeyEvent keyEvent) {
+    }
 }

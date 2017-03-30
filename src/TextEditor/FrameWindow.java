@@ -5,9 +5,10 @@ import Addition.MenuScroller;
 import Listener.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 
 /**
  * Created by shund on 27.02.2017.
@@ -17,32 +18,34 @@ public class FrameWindow {
     private FileHandler fileHandler;
     private TextPanel textPanel;
     private JScrollPane scrollPane;
+    private JComboBox comboFontSize;
+    private JComboBox comboFontType;
+    private JMenu fontTypeMenu;
+    private JMenu fontSizeMenu;
 
     public FrameWindow() {
         frameWindow = new JFrame("Text Editor");
         frameWindow.setSize(800, 600);
         frameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameWindow.setLayout(new BorderLayout());
-        frameWindow.setJMenuBar(createMenuBar());
+
+        Font font = new Font("Verdana", Font.PLAIN, 12);
+        frameWindow.setJMenuBar(createMenuBar(font));
         frameWindow.add(createToolBar(), BorderLayout.NORTH);
 
-        textPanel = new TextPanel(this);
-        scrollPane = new JScrollPane(textPanel);
-        scrollPane.getViewport().setBackground(Color.white);
+        createTextPanel();
 
-        frameWindow.add(scrollPane, BorderLayout.CENTER);
-
-        fileHandler = new FileHandler(this);
-
-        textPanel.getText().createInput();
+        createPopUpMenu(font);
 
         addActionListener();
         frameWindow.setVisible(true);
+        frameWindow.toFront();
+        frameWindow.requestFocus();
     }
 
-    private JMenuBar createMenuBar() {
+    /*----------------------------------------------------------------------------------------------------------------*/
+    private JMenuBar createMenuBar(Font font) {
         JMenuBar menuBar = new JMenuBar();
-        Font font = new Font("Verdana", Font.PLAIN, 12);
         menuBar.add(createFileMenu(font));
         menuBar.add(createEditMenu(font));
         menuBar.add(createFormatMenu(font));
@@ -52,29 +55,35 @@ public class FrameWindow {
     private JMenu createFileMenu(Font font) {
         JMenu fileMenu = new JMenu("File");
         fileMenu.setFont(font);
-        fileMenu.add(createMenuItem("Open", 'O', font, new ActionListener() {
+        /*------------------------------------------------------------------------------------------------------------*/
+        fileMenu.add(createMenuItem("Open", "MenuBar/open.png", null, 'O', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 fileHandler.openFile();
                 unloadFrameWindow();
             }
         }));
-        fileMenu.add(createMenuItem("Save", 'S', font, new ActionListener() {
+        /*------------------------------------------------------------------------------------------------------------*/
+        fileMenu.add(createMenuItem("Save", "MenuBar/save.png", null, 'S', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 fileHandler.saveXmlFile();
             }
         }));
+        /*------------------------------------------------------------------------------------------------------------*/
         fileMenu.addSeparator();
-        fileMenu.add(createMenuItem("Quit", 'Q', font, new ActionListener() {
+        /*------------------------------------------------------------------------------------------------------------*/
+        fileMenu.add(createMenuItem("Quit", "MenuBar/quit.png", null, 'Q', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                int answer = JOptionPane.showConfirmDialog(null, " Are you sure you want to quit? Save file?", "Quit", JOptionPane.YES_NO_OPTION);
+                int answer = JOptionPane.showConfirmDialog(null, "Information will be lost! Save file?", "Quit", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (answer == 0) {
-                   fileHandler.saveXmlFile();
+                    fileHandler.saveXmlFile();
                 }
-                getFrameWindow().setVisible(false);
-                System.exit(0);
+                if (answer != 2) {
+                    getFrameWindow().setVisible(false);
+                    System.exit(0);
+                }
             }
         }));
         return fileMenu;
@@ -83,23 +92,39 @@ public class FrameWindow {
     private JMenu createEditMenu(Font font) {
         JMenu editMenu = new JMenu("Edit");
         editMenu.setFont(font);
-        editMenu.add(createMenuItem("Copy", 'C', font, new ActionListener() {
+        /*------------------------------------------------------------------------------------------------------------*/
+        KeyStroke ctrlC = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        editMenu.add(createMenuItem("Copy", "MenuBar/copy.png", ctrlC, 'C', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().copy();
             }
         }));
-        editMenu.add(createMenuItem("Paste", 'P', font, new ActionListener() {
+        /*------------------------------------------------------------------------------------------------------------*/
+        KeyStroke ctrlV = KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        editMenu.add(createMenuItem("Paste", "MenuBar/paste.png", ctrlV, 'P', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().paste();
                 unloadFrameWindow();
             }
         }));
-        editMenu.add(createMenuItem("Cut", 'C', font, new ActionListener() {
+        /*------------------------------------------------------------------------------------------------------------*/
+        KeyStroke ctrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        editMenu.add(createMenuItem("Cut", "MenuBar/cut.png", ctrlX, 'C', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().cut();
+                unloadFrameWindow();
+            }
+        }));
+        /*------------------------------------------------------------------------------------------------------------*/
+        editMenu.addSeparator();
+        /*------------------------------------------------------------------------------------------------------------*/
+        editMenu.add(createMenuItem("Delete All", "MenuBar/clear.png", null, 'C', font, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().deleteAllText();
                 unloadFrameWindow();
             }
         }));
@@ -107,117 +132,182 @@ public class FrameWindow {
     }
 
     private JMenu createFormatMenu(Font font) {
+        ActionListener sliceFontTypeListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JRadioButtonMenuItem radioButtonMenuItem = (JRadioButtonMenuItem) actionEvent.getSource();
+                String fontType = radioButtonMenuItem.getText();
+                JComboBox comboType = getComboFontType();
+                comboType.setSelectedItem((Object) fontType);
+            }
+        };
+
+        ActionListener sliceFontSizeListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JRadioButtonMenuItem radioButtonMenuItem = (JRadioButtonMenuItem) actionEvent.getSource();
+                String fontSize = radioButtonMenuItem.getText();
+                JComboBox comboType = getComboFontSize();
+                comboType.setSelectedItem((Object) fontSize);
+            }
+        };
+        /*------------------------------------------------------------------------------------------------------------*/
         JMenu formatMenu = new JMenu("Format");
         formatMenu.setFont(font);
-        JMenu fontType = new JMenu("Font");
-        fontType.setFont(font);
+        /*------------------------------------------------------------------------------------------------------------*/
+        fontTypeMenu = new JMenu("Font");
+        fontTypeMenu.setFont(font);
         String[] type = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-        JScrollPane scrollPane = new JScrollPane();
-        JPanel panel = new JPanel();
+        ButtonGroup fontTypeGroup = new ButtonGroup();
         for (int index = 0; index < type.length; index++) {
             JRadioButtonMenuItem radioButtonMenuItem = new JRadioButtonMenuItem(type[index]);
-            scrollPane.getViewport().add(radioButtonMenuItem);
+            fontTypeMenu.add(radioButtonMenuItem);
+            fontTypeGroup.add(radioButtonMenuItem);
+            if (type[index].equals("Times New Roman")) {
+                radioButtonMenuItem.setSelected(true);
+            }
+            radioButtonMenuItem.addActionListener(sliceFontTypeListener);
         }
-
-        fontType.add(scrollPane);
-        formatMenu.add(fontType);
+        MenuScroller typeScroller = new MenuScroller(fontTypeMenu, 5, 50, 3, 1);
+        formatMenu.add(fontTypeMenu);
+        /*------------------------------------------------------------------------------------------------------------*/
+        fontSizeMenu = new JMenu("Size");
+        fontSizeMenu.setFont(font);
+        String[] size = {"8", "9", "10", "11", "12", "14", "18", "24", "30", "36", "48", "60", "72", "96"};
+        ButtonGroup fontSizeGroup = new ButtonGroup();
+        for (int index = 0; index < size.length; index++) {
+            JRadioButtonMenuItem radioButtonMenuItem = new JRadioButtonMenuItem(size[index]);
+            fontSizeMenu.add(radioButtonMenuItem);
+            fontSizeGroup.add(radioButtonMenuItem);
+            if (type[index].equals("14")) {
+                radioButtonMenuItem.setSelected(true);
+            }
+            radioButtonMenuItem.addActionListener(sliceFontSizeListener);
+        }
+        MenuScroller sizeScroller = new MenuScroller(fontSizeMenu, 5, 50, 3, 1);
+        formatMenu.add(fontSizeMenu);
         return formatMenu;
     }
 
-
-    private JMenuItem createMenuItem(String name, char mnemonic, Font font, ActionListener action) {
+    private JMenuItem createMenuItem(String name, String path, KeyStroke keyStroke, char mnemonic, Font font, ActionListener action) {
         JMenuItem menuItem = new JMenuItem(name);
+        ImageIcon imageIcon = new ImageIcon("Resource/" + path);
         menuItem.setFont(font);
-        menuItem.addActionListener(action);
+        menuItem.setIcon(imageIcon);
+        menuItem.setIconTextGap(5);
         menuItem.setMnemonic(mnemonic);
+        menuItem.setAccelerator(keyStroke);
+        menuItem.addActionListener(action);
         return menuItem;
     }
 
+    private void unloadMenu(JMenu menu, String data) {
+        boolean find = true;
+        int index = 0;
+        while (find) {
+            if (menu.getItem(index).getText().equals(data)) {
+                menu.getItem(index).setSelected(true);
+                find = false;
+            }
+            index++;
+        }
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
     private JToolBar createToolBar() {
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
         toolBar.setBackground(new Color(200, 200, 200, 108));
-        toolBar.add(createButton("open.png", new ActionListener() {
+        toolBar.add(createButton("ToolBar/open.png", new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent actionEvent) {
                 fileHandler.openFile();
             }
         }));
-        toolBar.add(createButton("save.png", new ActionListener() {
+        toolBar.add(createButton("ToolBar/save.png", new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent actionEvent) {
                 fileHandler.saveXmlFile();
             }
         }));
         toolBar.addSeparator();
-        toolBar.add(createButton("bold.png", new ActionListener() {
+        JButton boldButton = createButton("ToolBar/bold.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().changeFontStyle(Font.BOLD);
+                JButton button = (JButton) actionEvent.getSource();
                 unloadFrameWindow();
             }
-        }));
-        toolBar.add(createButton("italic.png", new ActionListener() {
+        });
+        toolBar.add(boldButton);
+        JButton italicButton = createButton("ToolBar/italic.png", new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().changeFontStyle(Font.ITALIC);
                 unloadFrameWindow();
             }
-        }));
+        });
+        toolBar.add(italicButton);
         toolBar.addSeparator();
-        JLabel sizeLabel = new JLabel("Size");
-        sizeLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         String[] fontSize = {"8", "9", "10", "11", "12", "14", "18", "24", "30", "36", "48", "60", "72", "96"};
-        JComboBox comboSize = new JComboBox(fontSize);
-        comboSize.setSelectedItem("14");
-        comboSize.setMaximumSize(comboSize.getPreferredSize());
-        comboSize.addActionListener(new ActionListener() {
+        comboFontSize = new JComboBox(fontSize);
+        comboFontSize.setSelectedItem("14");
+        comboFontSize.setMaximumSize(comboFontSize.getPreferredSize());
+        comboFontSize.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 JComboBox comboBox = (JComboBox) actionEvent.getSource();
                 String fontSize = (String) comboBox.getSelectedItem();
+                unloadMenu(fontSizeMenu, fontSize);
                 textPanel.getText().changeFontSize(Integer.parseInt(fontSize));
                 unloadFrameWindow();
             }
         });
-        toolBar.add(comboSize);
+        toolBar.add(comboFontSize);
         String[] fontType = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
-        JComboBox comboFont = new JComboBox(fontType);
-        comboFont.setSelectedItem("Times New Roman");
-        comboFont.setMaximumSize(comboFont.getPreferredSize());
-        comboFont.addActionListener(new ActionListener() {
+        comboFontType = new JComboBox(fontType);
+        comboFontType.setSelectedItem("Times New Roman");
+        comboFontType.setMaximumSize(comboFontType.getPreferredSize());
+        comboFontType.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 JComboBox comboBox = (JComboBox) actionEvent.getSource();
-                String fontType = (String) comboFont.getSelectedItem();
+                String fontType = (String) comboBox.getSelectedItem();
+                unloadMenu(fontTypeMenu, fontType);
                 textPanel.getText().changeFontType(fontType);
                 unloadFrameWindow();
             }
         });
-        toolBar.add(comboFont);
+        toolBar.add(comboFontType);
         toolBar.addSeparator();
-        toolBar.add(createButton("copy.png", new ActionListener() {
+        toolBar.add(createButton("ToolBar/copy.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().copy();
             }
         }));
-        toolBar.add(createButton("paste.png", new ActionListener() {
+        toolBar.add(createButton("ToolBar/paste.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().paste();
                 unloadFrameWindow();
             }
         }));
-        toolBar.add(createButton("cut.png", new ActionListener() {
+        toolBar.add(createButton("ToolBar/cut.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().cut();
                 unloadFrameWindow();
             }
         }));
-
-
+        toolBar.addSeparator();
+        toolBar.add(createButton("ToolBar/clear.png", new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().deleteAllText();
+                unloadFrameWindow();
+            }
+        }));
         return toolBar;
     }
 
@@ -229,26 +319,61 @@ public class FrameWindow {
         return button;
     }
 
-
-    public JFrame getFrameWindow() {
-        return frameWindow;
+    /*----------------------------------------------------------------------------------------------------------------*/
+    private void createTextPanel() {
+        textPanel = new TextPanel(this);
+        scrollPane = new JScrollPane(textPanel);
+        scrollPane.getViewport().setBackground(Color.white);
+        frameWindow.add(scrollPane, BorderLayout.CENTER);
+        textPanel.getText().createInput();
+        fileHandler = new FileHandler(this);
     }
 
-    public TextPanel getTextPanel() {
-        return textPanel;
+    private void createPopUpMenu(Font font) {
+        JPopupMenu popupMenu = new JPopupMenu();
+        /*------------------------------------------------------------------------------------------------------------*/
+        KeyStroke ctrlC = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        popupMenu.add(createMenuItem("Copy", "MenuBar/copy.png", ctrlC, 'C', font, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().copy();
+            }
+        }));
+        /*------------------------------------------------------------------------------------------------------------*/
+        KeyStroke ctrlV = KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        popupMenu.add(createMenuItem("Paste", "MenuBar/paste.png", ctrlV, 'P', font, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().paste();
+                unloadFrameWindow();
+            }
+        }));
+        /*------------------------------------------------------------------------------------------------------------*/
+        KeyStroke ctrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        popupMenu.add(createMenuItem("Cut", "MenuBar/cut.png", ctrlX, 'C', font, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                textPanel.getText().cut();
+                unloadFrameWindow();
+            }
+        }));
+        textPanel.setComponentPopupMenu(popupMenu);
     }
 
-    public JScrollPane getScrollPane() {
-        return scrollPane;
-    }
-
-
+    /*----------------------------------------------------------------------------------------------------------------*/
     public void unloadFrameWindow() {
         scrollPane.revalidate();
         scrollPane.repaint();
         frameWindow.requestFocus();
     }
 
+    public void setViewport(Point point) {
+        JViewport viewport = scrollPane.getViewport();
+        viewport.setViewPosition(point);
+        scrollPane.setViewport(viewport);
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
     private void addActionListener() {
         MouseHandler mouseHandler = new MouseHandler(this);
         textPanel.addMouseListener(mouseHandler);
@@ -270,9 +395,68 @@ public class FrameWindow {
         frameWindow.addKeyListener(new DeleteHandler(this));
         frameWindow.addKeyListener(new ShiftHandler(this));
         frameWindow.addKeyListener(new ControlHandler(this));
+        frameWindow.addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int answer = JOptionPane.showConfirmDialog(null, "Information will be lost! Save file?", "Quit", JOptionPane.YES_NO_OPTION);
+                if (answer == 0) {
+                    fileHandler.saveXmlFile();
+                }
+                if (answer != 2) {
+                    getFrameWindow().setVisible(false);
+                    System.exit(0);
+                }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        });
 
     }
 
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public JFrame getFrameWindow() {
+        return frameWindow;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public TextPanel getTextPanel() {
+        return textPanel;
+    }
+
+    public JComboBox getComboFontSize() {
+        return comboFontSize;
+    }
+
+    public JComboBox getComboFontType() {
+        return comboFontType;
+    }
+    /*----------------------------------------------------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------------------------------------------------*/
     public static void main(String[] args) {
         new FrameWindow();
     }

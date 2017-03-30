@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class Text {
 
     /*----------------------------------------------------------------------------------------------------------------*/
     public void createInput() {
-        caret = new Caret();
+        caret = new Caret(font);
         caretTimer();
         text.add(new Line());
     }
@@ -46,7 +45,7 @@ public class Text {
 
     /*----------------------------------------------------------------------------------------------------------------*/
     public void insertKeyChar(char charKey, int X, int Y) {
-        text.get(Y).addChar(X, charKey, font);
+        text.get(Y).add(X, charKey, font);
     }
 
     public void add(Line line) {
@@ -58,7 +57,7 @@ public class Text {
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
-    public void incrementX() {
+    private void incrementX() {
         if (isCaretInTheEndOfText()) {
         } else if (!isCaretInTheEndOfLine()) {
             caret.setCaretListX(caret.getCaretListX() + 1);
@@ -68,7 +67,7 @@ public class Text {
         }
     }
 
-    public void incrementY() {
+    private void incrementY() {
         if (!isCaretInTheLastLine()) {
             caret.setCaretListY(caret.getCaretListY() + 1);
             if (isCaretAfterTheLineEnd()) {
@@ -79,7 +78,7 @@ public class Text {
         }
     }
 
-    public void decrementX() {
+    private void decrementX() {
         if (isCaretInTheBeginOfText()) {
         } else if (!isCaretInTheBeginOfLine()) {
             caret.setCaretListX(caret.getCaretListX() - 1);
@@ -89,7 +88,7 @@ public class Text {
         }
     }
 
-    public void decrementY() {
+    private void decrementY() {
         if (!isCaretInTheFirstLine()) {
             caret.setCaretListY(caret.getCaretListY() - 1);
             if (isCaretAfterTheLineEnd()) {
@@ -104,6 +103,31 @@ public class Text {
         int x = getCaret().getCaretCoordinateX() > wight ? getCaret().getCaretCoordinateX() : 0;
         int y = getCaret().getCaretCoordinateY() - getText().get(getCaret().getCaretListY()).getMaxHigh();
         return new Point(x, y);
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public void moveCaretLeft() {
+        falseAlSelection();
+        decrementX();
+        caret.setFont(getPreviousFont());
+    }
+
+    public void moveCaretUp() {
+        falseAlSelection();
+        decrementY();
+        caret.setFont(getPreviousFont());
+    }
+
+    public void moveCaretRight() {
+        falseAlSelection();
+        incrementX();
+        caret.setFont(getPreviousFont());
+    }
+
+    public void moveCaretDown() {
+        falseAlSelection();
+        incrementY();
+        caret.setFont(getPreviousFont());
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
@@ -213,6 +237,14 @@ public class Text {
         }
     }
 
+    public void selectAllText(){
+        for (Line line : text){
+            for (Char charElement : line.getLine()){
+                charElement.setIsSelect(true);
+            }
+        }
+    }
+
     public void falseAlSelection() {
         for (Line line : text) {
             for (Char charElement : line.getLine()) {
@@ -222,7 +254,7 @@ public class Text {
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
-    public void deletePreviousChar() {
+    private void deletePreviousChar() {
         if (isCaretInTheBeginOfText()) {
         } else if (isCaretInTheBeginOfLine()) {
             boolean isLineIsEmpty = text.get(caret.getCaretListY()).size() == 0;
@@ -241,7 +273,7 @@ public class Text {
         }
     }
 
-    public void deleteNextChar() {
+    private void deleteNextChar() {
         if (isCaretInTheEndOfText()) {
         } else if (isCaretInTheEndOfLine()) {
             boolean isNextLineIsEmpty = text.get(caret.getCaretListY() + 1).size() == 0;
@@ -257,27 +289,39 @@ public class Text {
     }
 
     public boolean deleteSelectedText() {
-        boolean newLine = false;
-        for (int indexY = 0; indexY < text.size(); indexY++) {
-            newLine = true;
-            int indexX = 0;
-            while (indexX != text.get(indexY).getLine().size()) {
+        boolean newLine = true;
+        for (int indexY = text.size() - 1; indexY >= 0; indexY--) {
+            if (!newLine && isCaretInTheBeginOfLine()) {
+                deletePreviousChar();
+            }
+            for (int indexX = text.get(indexY).size() - 1; indexX >= 0; indexX--) {
                 if (text.get(indexY).getLine().get(indexX).isSelect()) {
                     if (newLine) {
-                        caret.setCaretListX(indexX);
+                        caret.setCaretListX(indexX + 1);
                         caret.setCaretListY(indexY);
                         newLine = false;
                     }
-                    deleteNextChar();
-                    indexX--;
-                }
-                indexX++;
-                if (!newLine && isCaretInTheEndOfLine()) {
-                    deleteNextChar();
+                    deletePreviousChar();
                 }
             }
         }
-        return !newLine;
+        return newLine;
+    }
+
+    public boolean deleteAllText(){
+        selectAllText();
+        deleteSelectedText();
+
+        return true;
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public void backSpaceKey() {
+        if (deleteSelectedText()) deletePreviousChar();
+    }
+
+    public void deleteKey() {
+        if (deleteSelectedText()) deleteNextChar();
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
@@ -301,6 +345,13 @@ public class Text {
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
+    public void enterLine() {
+        deleteSelectedText();
+        newLine();
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+
     public void copy() {
         String element = "";
         for (Line line : text) {
@@ -331,7 +382,7 @@ public class Text {
                 if (string.charAt(index) == '\n') {
                     newLine();
                 } else {
-                    text.get(caret.getCaretListY()).addChar(caret.getCaretListX(), string.charAt(index), font);
+                    text.get(caret.getCaretListY()).add(caret.getCaretListX(), string.charAt(index), font);
                     incrementX();
                 }
             }
@@ -364,8 +415,40 @@ public class Text {
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
+    public boolean isElementHere(Point click, Char charElement) {
+        int X = charElement.getX();
+        int Y = charElement.getY();
+        int wight = charElement.getWight();
+        int height = charElement.getHeight();
+        return (click.getX() >= X &&
+                click.getY() <= Y &&
+                click.getX() <= X + wight &&
+                click.getY() >= Y - height);
+    }
+
+    public boolean isElementHere(Point firstPoint, Point secondPoint, Char charElement) {
+        int Y = charElement.getY();
+        int X = charElement.getX();
+        int maxHeight = text.get(charElement.getNumberOfLine()).getMaxHigh();
+        Point upPoint = firstPoint.getY() < secondPoint.getY() ? firstPoint : secondPoint;
+        Point downPoint = firstPoint.getY() < secondPoint.getY() ? secondPoint : firstPoint;
+        if (Y < downPoint.getY() || Y - maxHeight > upPoint.getY()) {
+            return ((X >= upPoint.getX() && Y - maxHeight < upPoint.getY() && Y >= upPoint.getY()) ||
+                    (X <= downPoint.getX() && Y - maxHeight < downPoint.getY() && Y >= downPoint.getY()) ||
+                    (Y < downPoint.getY() && Y - maxHeight >= upPoint.getY()));
+        } else {
+            Point leftPoint = firstPoint.getX() < secondPoint.getX() ? firstPoint : secondPoint;
+            Point rightPoint = firstPoint.getX() < secondPoint.getX() ? secondPoint : firstPoint;
+            return (X >= leftPoint.getX() && X <= rightPoint.getX() &&
+                    Y - maxHeight < leftPoint.getY() && Y > leftPoint.getY() &&
+                    Y - maxHeight < rightPoint.getY() && Y > rightPoint.getY());
+        }
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
     public void mouseClick(Point point) {
         falseAlSelection();
+        caret.setFont(getPreviousFont());
         for (Line line : text) {
             borderOfLine(point, line);
             for (Char charElement : line.getLine()) {
@@ -379,6 +462,7 @@ public class Text {
 
     public void mouseClick(Point firstPoint, Point secondPoint) {
         falseAlSelection();
+        caret.setFont(getPreviousFont());
         for (Line line : text) {
             borderOfLine(secondPoint, line);
             for (Char charElement : line.getLine()) {
@@ -421,39 +505,20 @@ public class Text {
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
-    public boolean isElementHere(Point click, Char charElement) {
-        int X = charElement.getX();
-        int Y = charElement.getY();
-        int wight = charElement.getWight();
-        int height = charElement.getHeight();
-        return (click.getX() >= X &&
-                click.getY() <= Y &&
-                click.getX() <= X + wight &&
-                click.getY() >= Y - height);
-    }
-
-    public boolean isElementHere(Point firstPoint, Point secondPoint, Char charElement) {
-        int Y = charElement.getY();
-        int X = charElement.getX();
-        int maxHeight = text.get(charElement.getNumberOfLine()).getMaxHigh();
-        Point upPoint = firstPoint.getY() < secondPoint.getY() ? firstPoint : secondPoint;
-        Point downPoint = firstPoint.getY() < secondPoint.getY() ? secondPoint : firstPoint;
-        if (Y < downPoint.getY() || Y - maxHeight > upPoint.getY()) {
-            return ((X >= upPoint.getX() && Y - maxHeight < upPoint.getY() && Y >= upPoint.getY()) ||
-                    (X <= downPoint.getX() && Y - maxHeight < downPoint.getY() && Y >= downPoint.getY()) ||
-                    (Y < downPoint.getY() && Y - maxHeight >= upPoint.getY()));
-        } else {
-            Point leftPoint = firstPoint.getX() < secondPoint.getX() ? firstPoint : secondPoint;
-            Point rightPoint = firstPoint.getX() < secondPoint.getX() ? secondPoint : firstPoint;
-            return (X >= leftPoint.getX() && X <= rightPoint.getX() &&
-                    Y - maxHeight < leftPoint.getY() && Y > leftPoint.getY() &&
-                    Y - maxHeight < rightPoint.getY() && Y > rightPoint.getY());
+    private boolean isTextEmpty() {
+        boolean isTextEmpty = true;
+        for (Line line : text) {
+            if (!line.isEmpty()) {
+                return isTextEmpty = false;
+            }
         }
+        return isTextEmpty;
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/
     public void changeFontType(String fontType) {
         setFontType(fontType);
+        caret.setFontType(fontType);
         for (Line line : text) {
             for (Char charElement : line.getLine()) {
                 if (charElement.isSelect()) {
@@ -465,7 +530,7 @@ public class Text {
 
     public void changeFontSize(int fontSize) {
         setFontSize(fontSize);
-        caret.setFont(font);
+        caret.setFontSize(fontSize);
         for (Line line : text) {
             for (Char charElement : line.getLine()) {
                 if (charElement.isSelect()) {
@@ -477,7 +542,7 @@ public class Text {
 
     public void changeFontStyle(int fontStyle) {
         setFontStyle(fontStyle);
-        caret.setFont(font);
+        caret.setFontStyle(fontStyle);
         for (Line line : text) {
             for (Char charElement : line.getLine()) {
                 if (charElement.isSelect()) {
@@ -493,7 +558,7 @@ public class Text {
     }
 
     public void setFontSize(int fontSize) {
-        font = new Font(getFontType(), getFontStyle(), fontSize);
+        font = font.deriveFont((float) fontSize);
     }
 
     public void setFontStyle(int fontStyle) {
@@ -516,6 +581,10 @@ public class Text {
         }
     }
 
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
     /*----------------------------------------------------------------------------------------------------------------*/
     public String getFontType() {
         return font.getFontName();
@@ -531,6 +600,22 @@ public class Text {
 
     public Font getFont() {
         return font;
+    }
+
+    public Font getPreviousFont() {
+        if (isTextEmpty()) {
+            return getFont();
+        } else {
+            if (text.get(caret.getCaretListY()).isEmpty()) {
+                return getFont();
+            } else {
+                if (isCaretInTheBeginOfLine()) {
+                    return text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX()).getFont();
+                } else {
+                    return text.get(caret.getCaretListY()).getLine().get(caret.getCaretListX() - 1).getFont();
+                }
+            }
+        }
     }
 
     /*----------------------------------------------------------------------------------------------------------------*/

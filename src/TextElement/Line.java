@@ -10,7 +10,7 @@ import java.util.List;
 public class Line {
     private List<Char> line = new LinkedList<Char>();
     private int maxHigh;
-    private int leading;
+    private int maxDescent;
     private int maxLength;
     private int numberOfLine;
     private int coordinateY;
@@ -18,6 +18,20 @@ public class Line {
     public Line() {
     }
 
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public void add(Char charElement) {
+        line.add(charElement);
+    }
+
+    public void add(String stringElement, String font, String style, String size) {
+        line.add(new Char(stringElement.charAt(0), new Font(font, Integer.parseInt(style), Integer.parseInt(size))));
+    }
+
+    public void add(int coordinateX, char charElement, Font font) {
+        line.add(coordinateX, new Char(charElement, font));
+    }
+
+    /*----------------------------------------------------------------------------------------------------------------*/
     public Line subline(int firstIndex, int secondIndex) {
         Line newLine = new Line();
         for (int index = firstIndex; index < secondIndex; index++) {
@@ -25,32 +39,13 @@ public class Line {
         }
         return newLine;
     }
+
     public void remove(int firstIndex, int secondIndex) {
         int index = firstIndex;
         while (index < secondIndex) {
             this.line.remove(firstIndex);
             index++;
         }
-    }
-
-    public List<Char> getLine() {
-        return line;
-    }
-
-    public int getMaxHigh() {
-        return maxHigh;
-    }
-
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public int getNumberOfLine() {
-        return numberOfLine;
-    }
-
-    public int getCoordinateY() {
-        return coordinateY;
     }
 
     public int size() {
@@ -61,22 +56,24 @@ public class Line {
         return line.indexOf(charElement);
     }
 
-    public void setMaxLeading(int leading){
-        if (this.leading > this.leading){
-            this.leading = this.leading;
-        }
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public boolean isEmpty() {
+        return line.isEmpty();
     }
-    public int getMaxLeading(){
-        return leading;
-    }
-    public void setMaxHigh(int maxHigh) {
-        if (maxHigh > this.maxHigh) {
-            this.maxHigh = maxHigh;
+
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public void setMaxHigh(int high, boolean isLineEmpty) {
+        if (high > this.maxHigh && !isLineEmpty) {
+            this.maxHigh = high;
+        } else if (isLineEmpty) {
+            this.maxHigh = high;
         }
     }
 
-    public void setMaxHighNumber(int n) {
-        maxHigh = n;
+    public void setMaxDescent(int descent) {
+        if (descent > this.maxDescent) {
+            this.maxDescent = descent;
+        }
     }
 
     public void setMaxLength(int length) {
@@ -91,24 +88,28 @@ public class Line {
         this.coordinateY = coordinateY;
     }
 
-    public void addChar(int coordinateX, char charElement, Font font) {
-        line.add(coordinateX, new Char(charElement, font));
-//        System.out.println(coordinateX + "-" + charElement);
+    /*----------------------------------------------------------------------------------------------------------------*/
+    public List<Char> getLine() {
+        return line;
     }
 
-    public void add(Char charElement) {
-        line.add(charElement);
+    public int getMaxHigh() {
+        return maxHigh;
     }
 
-    public void add(String stringElement, String font, String style, String size) {
-        line.add(new Char(stringElement.charAt(0), new Font(font, Integer.parseInt(style), Integer.parseInt(size))));
+    public int getMaxDescent() {
+        return maxDescent;
     }
 
-
-
-
-    public boolean isEmpty() {
-        return line.isEmpty();
+    public int getMaxLength() {
+        return maxLength;
     }
 
+    public int getNumberOfLine() {
+        return numberOfLine;
+    }
+
+    public int getCoordinateY() {
+        return coordinateY;
+    }
 }

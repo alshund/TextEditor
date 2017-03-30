@@ -4,7 +4,6 @@ import TextElement.Caret;
 import TextEditor.FrameWindow;
 import TextEditor.Text;
 
-import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -24,23 +23,21 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
-        if(!keyEvent.isControlDown() && !isSystemKey(keyEvent)){
+        if (!keyEvent.isControlDown() && !isSystemKey(keyEvent)) {
             text.deleteSelectedText();
             text.insertKeyChar(keyEvent.getKeyChar(), caret.getCaretListX(), caret.getCaretListY());
-            text.incrementX();
+            text.moveCaretRight();
         }
-        JViewport viewport = frameWindow.getScrollPane().getViewport();
-        viewport.setViewPosition(text.followCaret(frameWindow.getFrameWindow().getWidth()));
-        frameWindow.getScrollPane().setViewport(viewport);
+        frameWindow.setViewport(text.followCaret(frameWindow.getFrameWindow().getWidth()));
         frameWindow.unloadFrameWindow();
-
     }
+
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER){
-            text.deleteSelectedText();
-            text.newLine();
+        if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            text.enterLine();
         }
+        frameWindow.setViewport(text.followCaret(frameWindow.getFrameWindow().getWidth()));
         frameWindow.unloadFrameWindow();
 
     }
@@ -48,11 +45,12 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
     }
+
     private boolean isSystemKey(KeyEvent keyEvent) {
-        return (keyEvent.getKeyChar() == (int)KeyEvent.VK_ENTER ||
-                keyEvent.getKeyChar() == (int)KeyEvent.VK_BACK_SPACE ||
-                keyEvent.getKeyChar() == (int)KeyEvent.VK_DELETE ||
-                keyEvent.getKeyChar() == (int)KeyEvent.VK_ESCAPE);
+        return (keyEvent.getKeyChar() == (int) KeyEvent.VK_ENTER ||
+                keyEvent.getKeyChar() == (int) KeyEvent.VK_BACK_SPACE ||
+                keyEvent.getKeyChar() == (int) KeyEvent.VK_DELETE ||
+                keyEvent.getKeyChar() == (int) KeyEvent.VK_ESCAPE);
     }
 }
 

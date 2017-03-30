@@ -13,28 +13,29 @@ import java.io.IOException;
  */
 public class ControlHandler implements KeyListener {
     private Text text;
-    public ControlHandler(FrameWindow frameWindow){
+
+    public ControlHandler(FrameWindow frameWindow) {
         text = frameWindow.getTextPanel().getText();
     }
+
     @Override
     public void keyTyped(KeyEvent keyEvent) {
-
     }
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_C){
+        if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_C) {
             text.copy();
-        }else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_V){
+        } else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_V) {
             text.paste();
-        }else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_X){
+        } else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_X) {
             text.cut();
-
+        } else if (keyEvent.isControlDown() && keyEvent.getKeyCode() == KeyEvent.VK_A){
+            text.selectAllText();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent keyEvent) {
-
     }
 }

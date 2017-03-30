@@ -11,20 +11,24 @@ import java.awt.event.KeyListener;
  */
 public class ShiftHandler implements KeyListener {
     private Text text;
-    public ShiftHandler(FrameWindow frameWindow){
+
+    public ShiftHandler(FrameWindow frameWindow) {
         text = frameWindow.getTextPanel().getText();
     }
+
     @Override
-    public void keyTyped(KeyEvent keyEvent) {}
+    public void keyTyped(KeyEvent keyEvent) {
+    }
+
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        if (isLeftSelection(keyEvent)){
+        if (isLeftSelection(keyEvent)) {
             text.leftSelection();
-        } else if (isUpSelection(keyEvent)){
+        } else if (isUpSelection(keyEvent)) {
             text.upSelection();
-        } else if(isRightSelection(keyEvent)){
+        } else if (isRightSelection(keyEvent)) {
             text.rightSelection();
-        } else if (isDownSelection(keyEvent)){
+        } else if (isDownSelection(keyEvent)) {
             text.downSelection();
         }
     }
@@ -46,5 +50,6 @@ public class ShiftHandler implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent keyEvent) {}
+    public void keyReleased(KeyEvent keyEvent) {
+    }
 }
