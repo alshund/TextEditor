@@ -386,7 +386,6 @@ public class Text {
                     incrementX();
                 }
             }
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Can't past text", "ERROR", JOptionPane.ERROR_MESSAGE | JOptionPane.OK_OPTION);
         }

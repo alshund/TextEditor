@@ -27,7 +27,6 @@ public class MouseHandler implements MouseInputListener {
         text.mouseClick(mouseEvent.getPoint());
         changeTypeComboBox();
         changeSizeComboBox();
-        frameWindow.setViewport(text.followCaret(frameWindow.getFrameWindow().getWidth()));
         frameWindow.unloadFrameWindow();
     }
 
@@ -38,13 +37,12 @@ public class MouseHandler implements MouseInputListener {
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-//        if (frameWindow.getTextPanel().getComponentPopupMenu().isPopupTrigger(mouseEvent)) {
-//            frameWindow.getTextPanel().getComponentPopupMenu().show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
-//        }
+        if (frameWindow.getTextPanel().getComponentPopupMenu().isPopupTrigger(mouseEvent)) {
+            frameWindow.getTextPanel().getComponentPopupMenu().show(mouseEvent.getComponent(), mouseEvent.getX(), mouseEvent.getY());
+        }
         text.mouseClick(click, mouseEvent.getPoint());
         changeTypeComboBox();
         changeSizeComboBox();
-        frameWindow.setViewport(text.followCaret(frameWindow.getFrameWindow().getWidth()));
         frameWindow.unloadFrameWindow();
     }
 
@@ -61,7 +59,6 @@ public class MouseHandler implements MouseInputListener {
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
         text.mouseClick(click, mouseEvent.getPoint());
-        frameWindow.setViewport(text.followCaret(frameWindow.getFrameWindow().getWidth()));
         frameWindow.unloadFrameWindow();
     }
 

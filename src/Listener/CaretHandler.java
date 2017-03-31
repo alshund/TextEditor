@@ -37,7 +37,6 @@ public class CaretHandler implements KeyListener {
         }
         changeTypeComboBox();
         changeSizeComboBox();
-        frameWindow.unloadFrameWindow();
     }
 
     @Override

@@ -28,8 +28,6 @@ public class KeyHandler implements KeyListener {
             text.insertKeyChar(keyEvent.getKeyChar(), caret.getCaretListX(), caret.getCaretListY());
             text.moveCaretRight();
         }
-        frameWindow.setViewport(text.followCaret(frameWindow.getFrameWindow().getWidth()));
-        frameWindow.unloadFrameWindow();
     }
 
     @Override

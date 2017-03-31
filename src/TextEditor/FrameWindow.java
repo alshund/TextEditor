@@ -96,7 +96,7 @@ public class FrameWindow {
         KeyStroke ctrlC = KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         editMenu.add(createMenuItem("Copy", "MenuBar/copy.png", ctrlC, 'C', font, new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(ActionEvent e) {
                 textPanel.getText().copy();
             }
         }));
@@ -104,24 +104,30 @@ public class FrameWindow {
         KeyStroke ctrlV = KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         editMenu.add(createMenuItem("Paste", "MenuBar/paste.png", ctrlV, 'P', font, new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                textPanel.getText().paste();
-                unloadFrameWindow();
+            public void actionPerformed(ActionEvent e) {
+                textPanel.getText().cut();
             }
         }));
         /*------------------------------------------------------------------------------------------------------------*/
         KeyStroke ctrlX = KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         editMenu.add(createMenuItem("Cut", "MenuBar/cut.png", ctrlX, 'C', font, new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(ActionEvent e) {
                 textPanel.getText().cut();
-                unloadFrameWindow();
             }
         }));
         /*------------------------------------------------------------------------------------------------------------*/
         editMenu.addSeparator();
         /*------------------------------------------------------------------------------------------------------------*/
-        editMenu.add(createMenuItem("Delete All", "MenuBar/clear.png", null, 'C', font, new ActionListener() {
+        KeyStroke ctrlA = KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        editMenu.add(createMenuItem("Select All", "MenuBar/selectAll.png", ctrlA, 'S', font, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textPanel.getText().selectAllText();
+            }
+        }));
+        /*------------------------------------------------------------------------------------------------------------*/
+        editMenu.add(createMenuItem("Delete All", "MenuBar/clear.png", null, 'D', font, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().deleteAllText();
@@ -141,7 +147,6 @@ public class FrameWindow {
                 comboType.setSelectedItem((Object) fontType);
             }
         };
-
         ActionListener sliceFontSizeListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -160,13 +165,13 @@ public class FrameWindow {
         String[] type = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         ButtonGroup fontTypeGroup = new ButtonGroup();
         for (int index = 0; index < type.length; index++) {
-            JRadioButtonMenuItem radioButtonMenuItem = new JRadioButtonMenuItem(type[index]);
-            fontTypeMenu.add(radioButtonMenuItem);
-            fontTypeGroup.add(radioButtonMenuItem);
+            JRadioButtonMenuItem fontTypeRB = new JRadioButtonMenuItem(type[index]);
+            fontTypeMenu.add(fontTypeRB);
+            fontTypeGroup.add(fontTypeRB);
             if (type[index].equals("Times New Roman")) {
-                radioButtonMenuItem.setSelected(true);
+                fontTypeRB.setSelected(true);
             }
-            radioButtonMenuItem.addActionListener(sliceFontTypeListener);
+            fontTypeRB.addActionListener(sliceFontTypeListener);
         }
         MenuScroller typeScroller = new MenuScroller(fontTypeMenu, 5, 50, 3, 1);
         formatMenu.add(fontTypeMenu);
@@ -176,13 +181,13 @@ public class FrameWindow {
         String[] size = {"8", "9", "10", "11", "12", "14", "18", "24", "30", "36", "48", "60", "72", "96"};
         ButtonGroup fontSizeGroup = new ButtonGroup();
         for (int index = 0; index < size.length; index++) {
-            JRadioButtonMenuItem radioButtonMenuItem = new JRadioButtonMenuItem(size[index]);
-            fontSizeMenu.add(radioButtonMenuItem);
-            fontSizeGroup.add(radioButtonMenuItem);
+            JRadioButtonMenuItem fontSizeRB = new JRadioButtonMenuItem(size[index]);
+            fontSizeMenu.add(fontSizeRB);
+            fontSizeGroup.add(fontSizeRB);
             if (type[index].equals("14")) {
-                radioButtonMenuItem.setSelected(true);
+                fontSizeRB.setSelected(true);
             }
-            radioButtonMenuItem.addActionListener(sliceFontSizeListener);
+            fontSizeRB.addActionListener(sliceFontSizeListener);
         }
         MenuScroller sizeScroller = new MenuScroller(fontSizeMenu, 5, 50, 3, 1);
         formatMenu.add(fontSizeMenu);
@@ -231,16 +236,16 @@ public class FrameWindow {
             }
         }));
         toolBar.addSeparator();
-        JButton boldButton = createButton("ToolBar/bold.png", new ActionListener() {
+        JToggleButton boldButton = createToggleButton("ToolBar/bold.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().changeFontStyle(Font.BOLD);
-                JButton button = (JButton) actionEvent.getSource();
+                JToggleButton button = (JToggleButton) actionEvent.getSource();
                 unloadFrameWindow();
             }
         });
         toolBar.add(boldButton);
-        JButton italicButton = createButton("ToolBar/italic.png", new ActionListener() {
+        JToggleButton italicButton = createToggleButton("ToolBar/italic.png", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 textPanel.getText().changeFontStyle(Font.ITALIC);
@@ -309,6 +314,14 @@ public class FrameWindow {
             }
         }));
         return toolBar;
+    }
+
+    private JToggleButton createToggleButton(String name, ActionListener actionListener) {
+        JToggleButton button = new JToggleButton();
+        button.addActionListener(actionListener);
+        ImageIcon imageIcon = new ImageIcon("Resource/" + name);
+        button.setIcon(imageIcon);
+        return button;
     }
 
     private JButton createButton(String name, ActionListener actionListener) {
@@ -394,7 +407,6 @@ public class FrameWindow {
         frameWindow.addKeyListener(new CaretHandler(this));
         frameWindow.addKeyListener(new DeleteHandler(this));
         frameWindow.addKeyListener(new ShiftHandler(this));
-        frameWindow.addKeyListener(new ControlHandler(this));
         frameWindow.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {
@@ -455,6 +467,7 @@ public class FrameWindow {
     public JComboBox getComboFontType() {
         return comboFontType;
     }
+
     /*----------------------------------------------------------------------------------------------------------------*/
     /*----------------------------------------------------------------------------------------------------------------*/
     public static void main(String[] args) {

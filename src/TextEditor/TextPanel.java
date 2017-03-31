@@ -127,7 +127,6 @@ public class TextPanel extends JComponent {
         }
         graphics2D.setColor(this.getBackground());
         graphics2D.drawLine (caretCoordinateX, caretCoordinateY, caretCoordinateX,caretCoordinateY-(int)(0.6*fontMetrics.getHeight()));
-//        textPanel.repaint();
     }
 
     public Text getText(){
